@@ -36,6 +36,33 @@
           </a>
         </li>
       </ul>
+
+      <ng-container *ngIf="isBrowser" class="d-flex">
+        <a
+          *ngIf="!auth.isLoggedIn"
+          class="btn btn-outline-primary"
+          routerLink="/login"
+        >
+          Login
+        </a>
+
+        <button
+          *ngIf="auth.isLoggedIn"
+          class="btn btn-outline-danger"
+          (click)="auth.logout()"
+          routerLink="/login"
+        >
+          Logout
+        </button>
+
+        <a
+          *ngIf="auth.isLoggedIn"
+          class="btn btn-outline-primary"
+          routerLink="/user-info"
+        >
+          User Info
+        </a>
+      </ng-container>
     </div>
   </div>
 </nav>
