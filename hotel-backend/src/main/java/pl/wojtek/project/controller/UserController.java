@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.wojtek.project.model.AppUser;
+import pl.wojtek.project.model.User;
 import pl.wojtek.project.service.UserService;
 
 import java.util.List;
@@ -22,21 +22,20 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AppUser>> getAllUsers() {
-        List<AppUser> users = userService.getAllUsers();
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> users = userService.getAllUsers();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AppUser> getUserById(@PathVariable("id") Long id) {
-        AppUser user = userService.getUserById(id);
+    public ResponseEntity<User> getUserById(@PathVariable("id") Long id) {
+        User user = userService.getUserById(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<AppUser> createUser(@RequestBody AppUser user) {
-        AppUser createdUser = userService.createUser(user);
-        System.out.println("Created user: " + createdUser.toString());
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        User createdUser = userService.createUser(user);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
