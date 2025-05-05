@@ -6,12 +6,14 @@ import { ContactComponent } from './component/contact/contact.component';
 import { LoginComponent } from './component/login/login.component';
 import { UserInfoComponent } from './component/user-info/user-info.component';
 import { AuthGuard } from './guard/auth.guard';
+import { RoomCreateComponent } from './component/room-create/room-create.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'about', component: AboutComponent },
   { path: 'contact', component: ContactComponent },
   { path: 'login', component: LoginComponent },
+  { path: 'room-create', component: RoomCreateComponent },
   {
     path: 'user-info',
     component: UserInfoComponent,

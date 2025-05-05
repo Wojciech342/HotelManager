@@ -21,6 +21,7 @@ import { UserInfoComponent } from './component/user-info/user-info.component';
 @NgModule({
   declarations: [
     AppComponent,
+    RoomCreateComponent,
     NavbarComponent,
     HomeComponent,
     AboutComponent,
