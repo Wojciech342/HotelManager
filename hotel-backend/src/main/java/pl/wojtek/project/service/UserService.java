@@ -2,7 +2,7 @@ package pl.wojtek.project.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pl.wojtek.project.model.AppUser;
+import pl.wojtek.project.model.User;
 import pl.wojtek.project.repository.UserRepository;
 
 import java.util.List;
@@ -17,18 +17,18 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public AppUser getUserById(Long id) {
-        AppUser user = userRepository.findById(id).orElse(null);
+    public User getUserById(Long id) {
+        User user = userRepository.findById(id).orElse(null);
         return user;
     }
 
-    public List<AppUser> getAllUsers() {
-        List<AppUser> users = userRepository.findAll();
+    public List<User> getAllUsers() {
+        List<User> users = userRepository.findAll();
         return users;
     }
 
-    public AppUser createUser(AppUser user) {
-        AppUser savedUser = userRepository.save(user);
+    public User createUser(User user) {
+        User savedUser = userRepository.save(user);
         return savedUser;
     }
 }
