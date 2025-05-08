@@ -8,6 +8,7 @@ import pl.wojtek.project.model.Room;
 import pl.wojtek.project.model.RoomSpecifications;
 import pl.wojtek.project.repository.RoomRepository;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -50,15 +51,18 @@ public class RoomService {
         Specification<Room> spec = Specification.where(null);
 
         if (type != null) {
-            spec = spec.and(RoomSpecifications.hasType(type));
+            String[] types = type.split(",");
+            spec = spec.and(RoomSpecifications.hasTypes(Arrays.asList(types)));
         }
         if (minRating != null) {
             spec = spec.and(RoomSpecifications.hasMinRating(minRating));
         }
-        if (minPrice != null && maxPrice != null) {
-            spec = spec.and(RoomSpecifications.hasPriceBetween(minPrice, maxPrice));
+        if(maxPrice != null) {
+            spec = spec.and(RoomSpecifications.hasPriceLessThan(maxPrice));
         }
-
+        if (minPrice != null) {
+            spec = spec.and(RoomSpecifications.hasPriceGreaterThan(minPrice));
+        }
         return roomRepository.findAll(spec);
     }
 }

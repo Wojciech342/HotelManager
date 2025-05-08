@@ -2,11 +2,12 @@ package pl.wojtek.project.model;
 
 import org.springframework.data.jpa.domain.Specification;
 
+import java.util.List;
+
 public class RoomSpecifications {
 
-    public static Specification<Room> hasType(String type) {
-        return (root, query, cb) ->
-                cb.equal(root.get("type"), type);
+    public static Specification<Room> hasTypes(List<String> types) {
+        return (root, query, cb) -> root.get("type").in(types);
     }
 
     public static Specification<Room> hasMinRating(Double minRating) {
@@ -14,9 +15,13 @@ public class RoomSpecifications {
                 cb.greaterThanOrEqualTo(root.get("rating"), minRating);
     }
 
-    public static Specification<Room> hasPriceBetween(Double minPrice, Double maxPrice) {
+    public static Specification<Room> hasPriceLessThan(Double maxPrice) {
         return (root, query, cb) ->
-                cb.between(root.get("price"), minPrice, maxPrice);
+                cb.lessThan(root.get("pricePerNight"), maxPrice);
+    }
+
+    public static Specification<Room> hasPriceGreaterThan(Double minPrice) {
+        return (root, query, cb) -> cb.greaterThan(root.get("pricePerNight"), minPrice);
     }
 }
 
