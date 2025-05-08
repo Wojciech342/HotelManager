@@ -7,5 +7,5 @@ import pl.wojtek.project.model.Room;
 import java.util.Optional;
 
 public interface RoomRepository extends JpaRepository<Room, Long>, JpaSpecificationExecutor<Room> {
-    Optional<Room> findByNumber(String number);
+    Optional<Room> findByNumber(int number);
 }
