@@ -4,6 +4,7 @@ import {
   BrowserModule,
   provideClientHydration,
 } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -15,9 +16,10 @@ import { HomeComponent } from './component/home/home.component';
 import { AboutComponent } from './component/about/about.component';
 import { ContactComponent } from './component/contact/contact.component';
 import { LoginComponent } from './component/login/login.component';
-import { AuthInterceptor } from './interceptor/auth.interceptor';
+import { AuthInterceptor } from './auth/auth-interceptor';
 import { UserInfoComponent } from './component/user-info/user-info.component';
 import { RoomsComponent } from './component/rooms/rooms.component';
+import { RegisterComponent } from './component/register/register.component';
 
 @NgModule({
   declarations: [
@@ -30,8 +32,9 @@ import { RoomsComponent } from './component/rooms/rooms.component';
     LoginComponent,
     UserInfoComponent,
     RoomsComponent,
+    RegisterComponent,
   ],
-  imports: [BrowserModule, AppRoutingModule, ReactiveFormsModule],
+  imports: [BrowserModule, AppRoutingModule, ReactiveFormsModule, FormsModule],
   providers: [
     provideClientHydration(),
     provideHttpClient(withFetch()),
