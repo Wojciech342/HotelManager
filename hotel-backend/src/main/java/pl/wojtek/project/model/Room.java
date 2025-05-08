@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.NaturalId;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +23,6 @@ public class Room {
     private int number;
 
     @Enumerated(EnumType.STRING)
-    @NaturalId
     private RoomType type;
 
     private int capacity;
