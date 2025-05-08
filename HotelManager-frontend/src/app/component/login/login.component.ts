@@ -6,13 +6,11 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css'], // optional
+  styleUrls: ['./login.component.css'],
 })
 export class LoginComponent {
-  // our Reactive Form
   loginForm: FormGroup;
 
-  // for displaying a server-side error message
   errorMsg: string | null = null;
 
   constructor(
@@ -20,7 +18,6 @@ export class LoginComponent {
     private auth: AuthService,
     private router: Router
   ) {
-    // build the form
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required],
@@ -33,11 +30,10 @@ export class LoginComponent {
     const { username, password } = this.loginForm.value;
     this.auth.login(username, password).subscribe({
       next: () => {
-        // redirect after successful login
         this.router.navigateByUrl('/');
+        
       },
       error: (err) => {
-        // show error message
         this.errorMsg = err.error?.message || 'Login failed';
       },
     });

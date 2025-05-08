@@ -1,6 +1,4 @@
-// src/app/services/auth.service.ts
-import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
@@ -8,17 +6,15 @@ import { Observable } from 'rxjs';
 interface LoginResponse {
   token: string;
   username: string;
-  // …maybe username, roles, etc.
 }
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private baseUrl = 'http://localhost:8080/api/auth';
-  private tokenKey = 'jwt_token';
+  private tokenKey = '';
 
   constructor(
-    private http: HttpClient,
-    @Inject(PLATFORM_ID) private platformId: any
+    private http: HttpClient
   ) {}
 
   login(username: string, password: string): Observable<LoginResponse> {
@@ -33,10 +29,6 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem(this.tokenKey);
-  }
-
-  private get isBrowser(): boolean {
-    return isPlatformBrowser(this.platformId);
   }
 
   get token(): string | null {
