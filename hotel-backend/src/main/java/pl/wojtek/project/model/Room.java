@@ -6,6 +6,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.NaturalId;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -15,12 +19,18 @@ import lombok.Setter;
 public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     private int number;
-    private String type;
+
+    @Enumerated(EnumType.STRING)
+    @NaturalId
+    private RoomType type;
+
     private int capacity;
     private String status;
-    private double rating;
+    @OneToMany
+    private List<RoomReview> reviews = new ArrayList<>();
+    private double averageRating;
     private double pricePerNight;
 }
