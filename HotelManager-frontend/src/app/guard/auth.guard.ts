@@ -1,16 +1,16 @@
-import { Injectable } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
-import { AuthService } from '../service/auth.service';
+import { CanActivateFn, Router } from '@angular/router';
+import { TokenStorageService } from '../auth/token-storage.service';
+import { inject } from '@angular/core';
 
-@Injectable({ providedIn: 'root' })
-export class AuthGuard implements CanActivate {
-  constructor(private auth: AuthService, private router: Router) {}
+export const AuthGuard: CanActivateFn = (route, state) => {
+  const tokenStorageService = inject(TokenStorageService);
+  const router = inject(Router);
 
-  canActivate(): boolean {
-    if (!this.auth.isLoggedIn) {
-      this.router.navigate(['/login']);
-      return false;
-    }
-    return true;
+  // check if any role from authorities list is in the routing list defined
+  if (tokenStorageService.getToken()) {
+    return true; // Allow access if the user is logged in
+  } else {
+    router.navigate(['/login']); // Redirect to login if not authenticated
+    return false;
   }
-}
+};
