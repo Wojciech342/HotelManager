@@ -7,6 +7,7 @@ import { LoginComponent } from './component/login/login.component';
 import { UserInfoComponent } from './component/user-info/user-info.component';
 import { AuthGuard } from './guard/auth.guard';
 import { RoomCreateComponent } from './component/room-create/room-create.component';
+import { RoomsComponent } from './component/rooms/rooms.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -14,6 +15,7 @@ const routes: Routes = [
   { path: 'contact', component: ContactComponent },
   { path: 'login', component: LoginComponent },
   { path: 'room-create', component: RoomCreateComponent },
+  { path: 'rooms', component: RoomsComponent },
   {
     path: 'user-info',
     component: UserInfoComponent,

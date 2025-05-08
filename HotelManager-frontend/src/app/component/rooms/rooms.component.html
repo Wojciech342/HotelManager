@@ -1,0 +1,97 @@
+<div class="container mt-4">
+  <h2>Available Rooms</h2>
+
+  <div class="row">
+    <!-- Filter Section -->
+    <div class="col-md-3">
+      <h4>Filters</h4>
+      <form [formGroup]="filterForm" (ngSubmit)="onFilter()">
+        <!-- Room Types -->
+        <div class="mb-3">
+          <label>Room Types</label>
+          <div *ngFor="let type of roomTypes" class="form-check">
+            <input
+              type="checkbox"
+              class="form-check-input"
+              [value]="type"
+              (change)="onTypeChange($event)"
+              [checked]="selectedTypes.includes(type)"
+            />
+            <label class="form-check-label">{{ type }}</label>
+          </div>
+        </div>
+
+        <!-- Min Price -->
+        <div class="mb-3">
+          <label for="minPrice">Min Price</label>
+          <input
+            id="minPrice"
+            type="number"
+            class="form-control"
+            formControlName="minPrice"
+          />
+        </div>
+
+        <!-- Max Price -->
+        <div class="mb-3">
+          <label for="maxPrice">Max Price</label>
+          <input
+            id="maxPrice"
+            type="number"
+            class="form-control"
+            formControlName="maxPrice"
+          />
+        </div>
+
+        <!-- Min Rating -->
+        <div class="mb-3">
+          <label for="minRating">Min Rating</label>
+          <input
+            id="minRating"
+            type="number"
+            class="form-control"
+            formControlName="minRating"
+          />
+        </div>
+
+        <!-- Buttons -->
+        <div class="d-flex">
+          <button type="submit" class="btn btn-primary me-2">Filter</button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="clearFilters()"
+          >
+            Clear
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Rooms Table Section -->
+    <div class="col-md-9">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Number</th>
+            <th>Type</th>
+            <th>Capacity</th>
+            <th>Status</th>
+            <th>Rating</th>
+            <th>Price/Night</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let room of rooms">
+            <td>{{ room.number }}</td>
+            <td>{{ room.type }}</td>
+            <td>{{ room.capacity }}</td>
+            <td>{{ room.status }}</td>
+            <td>{{ room.rating }}</td>
+            <td>{{ room.pricePerNight | currency }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

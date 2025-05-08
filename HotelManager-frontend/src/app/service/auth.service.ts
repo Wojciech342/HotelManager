@@ -13,9 +13,7 @@ export class AuthService {
   private baseUrl = 'http://localhost:8080/api/auth';
   private tokenKey = '';
 
-  constructor(
-    private http: HttpClient
-  ) {}
+  constructor(private http: HttpClient) {}
 
   login(username: string, password: string): Observable<LoginResponse> {
     return this.http

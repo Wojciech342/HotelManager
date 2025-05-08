@@ -17,6 +17,7 @@ import { ContactComponent } from './component/contact/contact.component';
 import { LoginComponent } from './component/login/login.component';
 import { AuthInterceptor } from './interceptor/auth.interceptor';
 import { UserInfoComponent } from './component/user-info/user-info.component';
+import { RoomsComponent } from './component/rooms/rooms.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { UserInfoComponent } from './component/user-info/user-info.component';
     ContactComponent,
     LoginComponent,
     UserInfoComponent,
+    RoomsComponent,
   ],
   imports: [BrowserModule, AppRoutingModule, ReactiveFormsModule],
   providers: [
