@@ -23,8 +23,13 @@ public class RoomController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Room>> getAllRooms() {
-        List<Room> rooms = roomService.getAllRooms();
+    public ResponseEntity<List<Room>> getRooms(
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) Double minRating,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice
+    ) {
+        List<Room> rooms = roomService.getFilteredRooms(type, minRating, minPrice, maxPrice);
         return new ResponseEntity<>(rooms, HttpStatus.OK);
     }
 
@@ -38,5 +43,17 @@ public class RoomController {
     public ResponseEntity<Room> createRoom(@RequestBody Room room) {
         Room createdRoom = roomService.createRoom(room);
         return new ResponseEntity<>(createdRoom, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Room> deleteRoom(@PathVariable Long id) {
+        roomService.deleteRoom(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Room> deleteAllRooms() {
+        roomService.deleteAllRooms();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
