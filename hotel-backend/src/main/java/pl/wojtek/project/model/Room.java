@@ -21,14 +21,17 @@ public class Room {
     private Long id;
 
     private int number;
+    private int capacity;
+    private String status;
+    private double averageRating;
+    private double pricePerNight;
 
     @Enumerated(EnumType.STRING)
     private RoomType type;
 
-    private int capacity;
-    private String status;
     @OneToMany
     private List<RoomReview> reviews = new ArrayList<>();
-    private double averageRating;
-    private double pricePerNight;
+    @OneToMany
+    private List<Reservation> roomReservations = new ArrayList<>();
+
 }
