@@ -28,15 +28,18 @@ public class RoomReservationController {
         return new ResponseEntity<>(reservations, HttpStatus.OK);
     }
 
-    @GetMapping
-    public ResponseEntity<RoomReservation> getRoomReservationById(@RequestParam Long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<RoomReservation> getRoomReservationById(@PathVariable Long id) {
         RoomReservation roomReservation = roomReservationService.getRoomReservationById(id);
         return new ResponseEntity<>(roomReservation, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<RoomReservation> createRoomReservation(@RequestBody RoomReservation roomReservation) {
-        RoomReservation createdRoomReservation = roomReservationService.createRoomReservation(roomReservation);
+    public ResponseEntity<RoomReservation> createRoomReservation(
+            @RequestParam Long userId,
+            @RequestParam Long roomId,
+            @RequestBody RoomReservation roomReservation) {
+        RoomReservation createdRoomReservation = roomReservationService.createRoomReservation(userId, roomId, roomReservation);
         return new ResponseEntity<>(createdRoomReservation, HttpStatus.CREATED);
     }
 
