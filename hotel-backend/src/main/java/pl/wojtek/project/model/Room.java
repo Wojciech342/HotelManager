@@ -31,7 +31,7 @@ public class Room {
 
     @OneToMany
     private List<RoomReview> reviews = new ArrayList<>();
-    @OneToMany
-    private List<Reservation> roomReservations = new ArrayList<>();
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RoomReservation> roomReservations = new ArrayList<>();
 
 }
