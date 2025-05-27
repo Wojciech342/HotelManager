@@ -48,6 +48,11 @@ public class AuthController {
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginForm loginRequest) {
+        // daoAuthenticationProvider uses UserDetailsServiceImpl to fetch user details
+        // It calls loadUserByUsername to checks if exists and load the user data (roles included)
+        // then hashes the password and checks if it matches the hashed password from the database
+        // The userDetailsService is set in WebSecurityConfig
+        // if it would not be set an exception would be thrown
         Authentication authentication = daoAuthenticationProvider.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -91,7 +96,29 @@ public class AuthController {
         userRepository.save(user);
 
         return new ResponseEntity<>(new ResponseMessage("User registered successfully."), HttpStatus.OK);
+    }
 
+    @GetMapping("/user")
+    public ResponseEntity<User> getUserDetails(Authentication authentication) {
+        // Get the username of the currently logged-in user
+        String username = authentication.getName();
+
+        // Fetch the user details from the database
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Return the user details
+        return ResponseEntity.ok(user);
+    }
+
+    @GetMapping("/user/{id}")
+    public ResponseEntity<User> getUserById(Authentication authentication, @PathVariable Long id) {
+        // Fetch the user details from the database
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Return the user details
+        return ResponseEntity.ok(user);
     }
 
 }
