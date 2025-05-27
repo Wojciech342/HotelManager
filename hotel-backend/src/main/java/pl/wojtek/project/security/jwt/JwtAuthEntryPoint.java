@@ -8,6 +8,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 import java.io.IOException;
 
+// Handles all unauthorized requests, specified in WebSecurityConfig
 @Component
 public class JwtAuthEntryPoint implements AuthenticationEntryPoint {
 

@@ -27,14 +27,17 @@ public class WebSecurityConfig {
     @Autowired
     UserDetailsServiceImpl userDetailsService;
 
+    // Handles all unauthorized requests
     @Autowired
     private JwtAuthEntryPoint unauthorizedHandler;
 
+    // Intercepts all requests and check for valid jwt token
     @Bean
     public JwtAuthTokenFilter authenticationJwtTokenFilter() {
         return new JwtAuthTokenFilter();
     }
 
+    // Handles user authentication
     @Bean
     DaoAuthenticationProvider authProvider(){
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -63,8 +66,10 @@ public class WebSecurityConfig {
                         .requestMatchers("/exampleSecurity/admin").hasRole("ADMIN")
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/rooms/**").permitAll()
+                        .requestMatchers("/api/roomReservations/**").permitAll()
                         .anyRequest().authenticated()
                 )
+                // Specify how to handle all unauthorized requests
                 .exceptionHandling(unauthorized -> unauthorized
                         .authenticationEntryPoint(unauthorizedHandler)
                 )
