@@ -43,4 +43,19 @@ public class RoomReservationController {
         return new ResponseEntity<>(createdRoomReservation, HttpStatus.CREATED);
     }
 
+    @PutMapping
+    public ResponseEntity<RoomReservation> updateRoomReservation(
+            @PathVariable Long id,
+            @RequestBody RoomReservation roomReservation
+    ) {
+        RoomReservation updatedRoomReservation = roomReservationService.updateRoomReservation(id, roomReservation);
+        return new ResponseEntity<>(updatedRoomReservation, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<RoomReservation> deleteRoomReservation(@PathVariable Long id) {
+        roomReservationService.deleteRoomReservationById(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
 }

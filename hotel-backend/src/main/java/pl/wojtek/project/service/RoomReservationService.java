@@ -72,4 +72,38 @@ public class RoomReservationService {
                 .orElseThrow(() -> new ResourceNotFoundException("RoomReservation", "id", id));
         return roomReservation;
     }
+
+    @Transactional
+    public RoomReservation updateRoomReservation(Long id, RoomReservation roomReservation) {
+        // Fetch the existing reservation
+        RoomReservation roomReservationFromDB = roomReservationRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("RoomReservation", "id", id));
+
+        // Update fields
+        if (roomReservation.getStartDate() != null) {
+            roomReservationFromDB.setStartDate(roomReservation.getStartDate());
+        }
+        if (roomReservation.getEndDate() != null) {
+            roomReservationFromDB.setEndDate(roomReservation.getEndDate());
+        }
+        if (roomReservation.getPrice() != 0) {
+            roomReservationFromDB.setPrice(roomReservation.getPrice());
+        }
+
+        RoomReservation updatedRoomReservation = roomReservationRepository.save(roomReservationFromDB);
+        return updatedRoomReservation;
+    }
+
+    @Transactional
+    public void deleteRoomReservationById(Long id) {
+        roomReservationRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("RoomReservation", "id", id));
+
+        // orphanRemoval = true:
+        // This ensures that removing a RoomReservation from the roomReservations list
+        // in the Room entity automatically deletes it from the database.
+
+
+        roomReservationRepository.deleteById(id);
+    }
 }
