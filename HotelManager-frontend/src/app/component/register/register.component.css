@@ -1,0 +1,7 @@
+.register-card {
+  min-width: 420px;
+  max-width: 520px;
+  min-height: 480px;
+  font-size: 1.2rem;
+  border-radius: 1.5rem;
+}

@@ -1,5 +1,4 @@
 export class SignupInfo {
-
   username: string;
   role: string[];
   password: string;
@@ -10,4 +9,3 @@ export class SignupInfo {
     this.password = password;
   }
 }
-
