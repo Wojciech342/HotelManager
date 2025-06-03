@@ -30,12 +30,12 @@ public class RoomReservationService {
     }
 
     @Transactional
-    public RoomReservation createRoomReservation(Long userId, Long roomId, RoomReservation roomReservation) {
+    public RoomReservation createRoomReservation(String username, Long roomId, RoomReservation roomReservation) {
         // Fetch the user and room from the database
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
         Room room = roomRepository.findById(roomId)
-                .orElseThrow(() -> new IllegalArgumentException("Room not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Room", "id", roomId));
 
         // Validate reservation dates
         if (roomReservation.getStartDate().isAfter(roomReservation.getEndDate())) {
@@ -105,5 +105,12 @@ public class RoomReservationService {
 
 
         roomReservationRepository.deleteById(id);
+    }
+
+    public List<RoomReservation> getRoomReservationsByRoomId(Long roomId) {
+        List<RoomReservation> roomReservations = roomReservationRepository
+                .findByRoomId(roomId).orElseThrow(() -> new ResourceNotFoundException("RoomReservation", "roomId", roomId));
+
+        return roomReservations;
     }
 }
