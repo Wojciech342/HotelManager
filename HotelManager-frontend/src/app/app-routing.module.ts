@@ -9,6 +9,7 @@ import { AuthGuard } from './guard/auth.guard';
 import { RoomCreateComponent } from './component/room-create/room-create.component';
 import { RoomsComponent } from './component/rooms/rooms.component';
 import { RegisterComponent } from './component/register/register.component';
+import { MakeReservationComponent } from './component/make-reservation/make-reservation.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -18,6 +19,7 @@ const routes: Routes = [
   { path: 'signup', component: RegisterComponent },
   { path: 'room-create', component: RoomCreateComponent },
   { path: 'rooms', component: RoomsComponent },
+  { path: 'make-reservation/:roomId', component: MakeReservationComponent },
   {
     path: 'user-info',
     component: UserInfoComponent,

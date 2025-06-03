@@ -20,6 +20,11 @@ import { AuthInterceptor } from './auth/auth-interceptor';
 import { UserInfoComponent } from './component/user-info/user-info.component';
 import { RoomsComponent } from './component/rooms/rooms.component';
 import { RegisterComponent } from './component/register/register.component';
+import { MakeReservationComponent } from './component/make-reservation/make-reservation.component';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatInputModule } from '@angular/material/input';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @NgModule({
   declarations: [
@@ -33,12 +38,22 @@ import { RegisterComponent } from './component/register/register.component';
     UserInfoComponent,
     RoomsComponent,
     RegisterComponent,
+    MakeReservationComponent,
   ],
-  imports: [BrowserModule, AppRoutingModule, ReactiveFormsModule, FormsModule],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    ReactiveFormsModule,
+    FormsModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatInputModule,
+  ],
   providers: [
     provideClientHydration(),
     provideHttpClient(withFetch()),
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    provideAnimationsAsync(),
   ],
   bootstrap: [AppComponent],
 })

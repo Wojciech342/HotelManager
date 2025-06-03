@@ -79,6 +79,7 @@
             <th>Status</th>
             <th>Rating</th>
             <th>Price/Night</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -89,6 +90,14 @@
             <td>{{ room.status }}</td>
             <td>{{ room.rating }}</td>
             <td>{{ room.pricePerNight | currency }}</td>
+            <td>
+              <button
+                class="btn btn-success btn-sm"
+                [routerLink]="['/make-reservation', room.id]"
+              >
+                Make a Reservation
+              </button>
+            </td>
           </tr>
         </tbody>
       </table>

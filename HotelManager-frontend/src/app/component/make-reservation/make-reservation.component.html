@@ -1,0 +1,72 @@
+<div class="d-flex justify-content-center align-items-center mt-5">
+  <div class="card shadow p-5 make-res-card">
+    <h2 class="mb-4 text-center">Make a Reservation</h2>
+    <div *ngIf="room">
+      <div class="mb-3">
+        <strong>Room:</strong> {{ room.number }} ({{ room.type }})<br />
+        <strong>Price per night:</strong> {{ room.pricePerNight | currency }}
+      </div>
+      <form [formGroup]="reservationForm" (ngSubmit)="onSubmit()" novalidate>
+        <div class="mb-3">
+          <label for="startDate" class="form-label">Start Date</label>
+          <mat-form-field appearance="fill" class="w-100">
+            <input
+              matInput
+              [matDatepicker]="pickerStart"
+              id="startDate"
+              formControlName="startDate"
+              [matDatepickerFilter]="dateFilter"
+              [min]="minDate"
+              [max]="reservationForm.value.endDate"
+              [disabled]="!room"
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="pickerStart"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #pickerStart></mat-datepicker>
+          </mat-form-field>
+        </div>
+        <div class="mb-3">
+          <label for="endDate" class="form-label">End Date</label>
+          <mat-form-field appearance="fill" class="w-100">
+            <input
+              matInput
+              [matDatepicker]="pickerEnd"
+              id="endDate"
+              formControlName="endDate"
+              [matDatepickerFilter]="dateFilter"
+              [min]="
+                reservationForm.value.startDate
+                  ? reservationForm.value.startDate
+                  : minDate
+              "
+              [disabled]="!room"
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="pickerEnd"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #pickerEnd></mat-datepicker>
+          </mat-form-field>
+        </div>
+        <div class="mb-3">
+          <strong>Total Price:</strong>
+          <span *ngIf="totalPrice !== null">{{ totalPrice | currency }}</span>
+        </div>
+        <div class="d-grid">
+          <button
+            class="btn btn-primary btn-lg"
+            type="submit"
+            [disabled]="reservationForm.invalid"
+          >
+            Reserve
+          </button>
+        </div>
+      </form>
+    </div>
+    <div *ngIf="!room" class="text-center text-danger">
+      Loading room details...
+    </div>
+  </div>
+</div>
