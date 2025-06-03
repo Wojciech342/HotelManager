@@ -47,17 +47,16 @@ public class RoomService {
         roomRepository.deleteAll();
     }
 
-    public List<Room> getFilteredRooms(String type, Double minRating, Double minPrice, Double maxPrice) {
+    public List<Room> getFilteredRooms(List<String> types, Double minRating, Double minPrice, Double maxPrice) {
         Specification<Room> spec = Specification.where(null);
 
-        if (type != null) {
-            String[] types = type.split(",");
-            spec = spec.and(RoomSpecifications.hasTypes(Arrays.asList(types)));
+        if (types != null && !types.isEmpty()) {
+            spec = spec.and(RoomSpecifications.hasTypes(types));
         }
         if (minRating != null) {
             spec = spec.and(RoomSpecifications.hasMinRating(minRating));
         }
-        if(maxPrice != null) {
+        if (maxPrice != null) {
             spec = spec.and(RoomSpecifications.hasPriceLessThan(maxPrice));
         }
         if (minPrice != null) {

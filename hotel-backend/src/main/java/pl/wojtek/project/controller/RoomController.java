@@ -23,13 +23,12 @@ public class RoomController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Room>> getRooms(
-            @RequestParam(required = false) String type,
-            @RequestParam(required = false) Double minRating,
-            @RequestParam(required = false) Double minPrice,
-            @RequestParam(required = false) Double maxPrice
-    ) {
-        List<Room> rooms = roomService.getFilteredRooms(type, minRating, minPrice, maxPrice);
+    public ResponseEntity<List<Room>> getFilteredRooms(
+            @RequestParam(value = "type", required = false) List<String> types,
+            @RequestParam(value = "minRating", required = false) Double minRating,
+            @RequestParam(value = "minPrice", required = false) Double minPrice,
+            @RequestParam(value = "maxPrice", required = false) Double maxPrice) {
+        List<Room> rooms = roomService.getFilteredRooms(types, minRating, minPrice, maxPrice);
         return new ResponseEntity<>(rooms, HttpStatus.OK);
     }
 

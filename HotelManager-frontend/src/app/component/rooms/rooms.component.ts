@@ -28,7 +28,7 @@ export class RoomsComponent implements OnInit {
 
   getRooms(filters: any = {}): void {
     if (this.selectedTypes.length > 0) {
-      filters.type = this.selectedTypes.join(','); // Send selected types as a comma-separated string
+      filters.type = this.selectedTypes; // Send selected types as a comma-separated string
     }
     this.roomService.getFilteredRooms(filters).subscribe({
       next: (rooms) => (this.rooms = rooms),

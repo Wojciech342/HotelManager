@@ -17,10 +17,17 @@ export class RoomService {
 
   getFilteredRooms(filters: any): Observable<Room[]> {
     let params = new HttpParams();
-    if (filters.type) params = params.set('type', filters.type);
-    if (filters.minPrice) params = params.set('minPrice', filters.minPrice);
-    if (filters.maxPrice) params = params.set('maxPrice', filters.maxPrice);
-    if (filters.minRating) params = params.set('minRating', filters.minRating);
+    if (filters.type && Array.isArray(filters.type)) {
+      filters.type.forEach((type: string) => {
+        params = params.append('type', type);
+      });
+    }
+    if (filters.minPrice != null)
+      params = params.set('minPrice', filters.minPrice);
+    if (filters.maxPrice != null)
+      params = params.set('maxPrice', filters.maxPrice);
+    if (filters.minRating != null)
+      params = params.set('minRating', filters.minRating);
 
     return this.http.get<Room[]>(this.baseUrl, { params });
   }
