@@ -5,6 +5,7 @@ import { RoomService } from '../../service/room.service';
 import { Room } from '../../model/room';
 import { RoomReservationService } from '../../service/room-reservation.service';
 import { RoomReservation } from '../../model/roomReservation';
+import { start } from 'repl';
 
 @Component({
   selector: 'app-make-reservation',
@@ -15,10 +16,10 @@ export class MakeReservationComponent implements OnInit {
   reservationForm!: FormGroup;
   room: Room | null = null;
   totalPrice: number | null = null;
-  existingReservations: RoomReservation[] = []; // <-- Add this line
-  minDate: Date; // Minimum date for the date picker
+  existingReservations: RoomReservation[] = [];
+  minDate: Date = new Date();
 
-  dateFilter: (date: Date | null) => boolean = () => true; // <-- Add this line
+  dateFilter: (date: Date | null) => boolean = () => true;
 
   constructor(
     private route: ActivatedRoute,
@@ -26,9 +27,7 @@ export class MakeReservationComponent implements OnInit {
     private roomService: RoomService,
     private router: Router,
     private roomReservationService: RoomReservationService
-  ) {
-    this.minDate = new Date();
-  }
+  ) {}
 
   ngOnInit(): void {
     const roomId = this.route.snapshot.paramMap.get('roomId');
@@ -55,7 +54,8 @@ export class MakeReservationComponent implements OnInit {
 
     this.dateFilter = (date: Date | null): boolean => {
       if (!date) return false;
-      // Check if date is not in any reserved range
+      // Only allow today or future dates, and not in any reserved range
+      if (date < this.minDate) return false;
       return !this.existingReservations.some(
         (res) =>
           new Date(res.startDate) <= date && date <= new Date(res.endDate)
@@ -67,9 +67,20 @@ export class MakeReservationComponent implements OnInit {
     if (this.room) {
       const { startDate, endDate } = this.reservationForm.value;
       if (startDate && endDate) {
-        const start = new Date(startDate);
-        const end = new Date(endDate);
-        const days = (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24);
+        // Always convert to yyyy-MM-dd string, then to Date at local midnight
+        const startStr =
+          typeof startDate === 'string'
+            ? startDate
+            : startDate.toLocaleDateString('en-CA');
+        const endStr =
+          typeof endDate === 'string'
+            ? endDate
+            : endDate.toLocaleDateString('en-CA');
+        const start = new Date(startStr + 'T00:00:00');
+        const end = new Date(endStr + 'T00:00:00');
+        const days = Math.round(
+          (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
+        );
         this.totalPrice = days > 0 ? days * this.room.pricePerNight : null;
       } else {
         this.totalPrice = null;
@@ -86,20 +97,32 @@ export class MakeReservationComponent implements OnInit {
       return;
     }
 
-    //const { startDate, endDate } = this.reservationForm.value;
+    const { startDate, endDate } = this.reservationForm.value;
     const reservationDate = new Date().toISOString();
-    const startDate = '2025-05-10T14:00:00';
-    const endDate = '2025-06-10T14:00:00';
 
-    // ASK !!!!!!!!!
+    console.log(startDate);
+    console.log(endDate);
+
+    // Use yyyy-MM-dd format for startDate and endDate if backend expects LocalDate
+    const formattedStartDate =
+      typeof startDate === 'string'
+        ? startDate
+        : startDate.toLocaleDateString('en-CA'); // 'yyyy-MM-dd'
+    const formattedEndDate =
+      typeof endDate === 'string'
+        ? endDate
+        : endDate.toLocaleDateString('en-CA');
+
     const reservation: RoomReservation = {
       reservationDate,
-      startDate,
-      endDate,
+      startDate: formattedStartDate,
+      endDate: formattedEndDate,
       price: this.totalPrice ?? 0,
       status: 'PENDING',
-      roomId: this.room.id!,
     };
+
+    console.log(formattedStartDate);
+    console.log(formattedEndDate);
 
     this.roomReservationService
       .createRoomReservation(username, this.room.id!, reservation)
