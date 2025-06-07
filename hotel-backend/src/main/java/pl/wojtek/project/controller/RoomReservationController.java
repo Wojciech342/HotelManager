@@ -1,6 +1,7 @@
 package pl.wojtek.project.controller;
 
 
+import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +41,12 @@ public class RoomReservationController {
         return new ResponseEntity<>(reservations, HttpStatus.OK);
     }
 
+    @GetMapping("/users/{username}")
+    public ResponseEntity<List<RoomReservation>> getReservationsByUsername(@PathVariable String username) {
+        List<RoomReservation> reservations = roomReservationService.getRoomReservationsByUsername(username);
+        return new ResponseEntity<>(reservations, HttpStatus.OK);
+    }
+
     @PostMapping
     public ResponseEntity<RoomReservation> createRoomReservation(
             @RequestParam String username,
@@ -49,7 +56,7 @@ public class RoomReservationController {
         return new ResponseEntity<>(createdRoomReservation, HttpStatus.CREATED);
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     public ResponseEntity<RoomReservation> updateRoomReservation(
             @PathVariable Long id,
             @RequestBody RoomReservation roomReservation

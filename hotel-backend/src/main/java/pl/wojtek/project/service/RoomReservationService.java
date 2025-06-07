@@ -89,6 +89,9 @@ public class RoomReservationService {
         if (roomReservation.getPrice() != 0) {
             roomReservationFromDB.setPrice(roomReservation.getPrice());
         }
+        if(roomReservation.getStatus() != null) {
+            roomReservationFromDB.setStatus(roomReservation.getStatus());
+        }
 
         RoomReservation updatedRoomReservation = roomReservationRepository.save(roomReservationFromDB);
         return updatedRoomReservation;
@@ -110,6 +113,16 @@ public class RoomReservationService {
     public List<RoomReservation> getRoomReservationsByRoomId(Long roomId) {
         List<RoomReservation> roomReservations = roomReservationRepository
                 .findByRoomId(roomId).orElseThrow(() -> new ResourceNotFoundException("RoomReservation", "roomId", roomId));
+
+        return roomReservations;
+    }
+
+    public List<RoomReservation> getRoomReservationsByUsername(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+
+        List<RoomReservation> roomReservations = roomReservationRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("RoomReservation", "userId", user.getId()));
 
         return roomReservations;
     }
