@@ -33,6 +33,9 @@ public class User {
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles = new HashSet<>();
 
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<RoomReview> roomReviews = new ArrayList<>();
+
     public User(String username, String password) {
         this.username = username;
         this.password = password;

@@ -1,5 +1,6 @@
 package pl.wojtek.project.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,9 +17,10 @@ public class RoomReview {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long userId;
+    private String username;
 
     @ManyToOne
+    @JsonIgnore
     private Room room;
 
     private String description;
