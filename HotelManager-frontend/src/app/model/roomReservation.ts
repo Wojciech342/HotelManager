@@ -1,5 +1,8 @@
 import { Reservation } from './reservation';
+import { Room } from './room';
+import { RoomReview } from './roomReview';
 
 export interface RoomReservation extends Reservation {
-  roomId: number;
+  room?: Room;
+  roomReview?: RoomReview;
 }

@@ -26,5 +26,17 @@ export class RoomReservationService {
     return this.http.get<RoomReservation[]>(`${this.apiUrl}/rooms/${roomId}`);
   }
 
-  // You can add more methods for fetching, updating, deleting reservations as needed
+  getReservationsByUsername(username: string): Observable<RoomReservation[]> {
+    return this.http.get<RoomReservation[]>(`${this.apiUrl}/users/${username}`);
+  }
+
+  updateReservation(
+    reservationId: number,
+    roomReservation: RoomReservation
+  ): Observable<RoomReservation> {
+    return this.http.put<RoomReservation>(
+      `${this.apiUrl}/${reservationId}`,
+      roomReservation
+    );
+  }
 }

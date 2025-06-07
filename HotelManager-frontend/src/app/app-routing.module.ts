@@ -10,6 +10,7 @@ import { RoomCreateComponent } from './component/room-create/room-create.compone
 import { RoomsComponent } from './component/rooms/rooms.component';
 import { RegisterComponent } from './component/register/register.component';
 import { MakeReservationComponent } from './component/make-reservation/make-reservation.component';
+import { MyReservationsComponent } from './component/my-reservations/my-reservations.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -20,6 +21,7 @@ const routes: Routes = [
   { path: 'room-create', component: RoomCreateComponent },
   { path: 'rooms', component: RoomsComponent },
   { path: 'make-reservation/:roomId', component: MakeReservationComponent },
+  { path: 'my-reservations', component: MyReservationsComponent },
   {
     path: 'user-info',
     component: UserInfoComponent,

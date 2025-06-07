@@ -25,6 +25,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MyReservationsComponent } from './component/my-reservations/my-reservations.component';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { MatNativeDateModule } from '@angular/material/core';
     RoomsComponent,
     RegisterComponent,
     MakeReservationComponent,
+    MyReservationsComponent,
   ],
   imports: [
     BrowserModule,
