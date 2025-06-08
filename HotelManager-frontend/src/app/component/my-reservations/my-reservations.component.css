@@ -1,0 +1,109 @@
+.reservation-card {
+  border-radius: 1rem;
+  transition: box-shadow 0.2s, transform 0.2s;
+  min-height: 160px;
+  background: #fff;
+}
+.reservation-card:hover {
+  box-shadow: 0 8px 32px rgba(30, 60, 114, 0.12),
+    0 1.5px 6px rgba(42, 82, 152, 0.08);
+  transform: translateY(-2px) scale(1.01);
+}
+.reservation-img-wrapper {
+  border-top-left-radius: 1rem;
+  border-bottom-left-radius: 1rem;
+  overflow: hidden;
+  min-width: 180px;
+  min-height: 140px;
+  background: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.card-body {
+  padding: 2rem 1.5rem;
+}
+@media (max-width: 991.98px) {
+  .reservation-card {
+    flex-direction: column !important;
+    min-height: unset;
+  }
+  .reservation-img-wrapper {
+    border-radius: 1rem 1rem 0 0 !important;
+    min-width: 100%;
+    min-height: 120px;
+  }
+}
+.modal-backdrop-custom {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1050;
+}
+.modal-dialog-custom {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  max-width: 400px;
+  width: 100%;
+  z-index: 1060;
+  box-shadow: 0 8px 32px rgba(30, 60, 114, 0.18);
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -60%) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.modal-header-custom {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.description-area {
+  min-height: 120px;
+  border-radius: 0.75rem;
+  border: 1.5px solid #e3e6ed;
+  font-size: 1.05rem;
+  padding: 1rem;
+  resize: vertical;
+  transition: border-color 0.2s;
+}
+.description-area:focus {
+  border-color: #2a5298;
+  box-shadow: 0 0 0 0.1rem rgba(42, 82, 152, 0.08);
+}
+
+.btn-gradient {
+  background: linear-gradient(90deg, #2a5298 0%, #1e3c72 100%);
+  color: #fff;
+  border: none;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(42, 82, 152, 0.08);
+}
+.btn-gradient:hover,
+.btn-gradient:focus {
+  background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);
+  color: #fff;
+}
+
+.btn-lg {
+  font-size: 1.1rem;
+  padding-top: 0.7rem;
+  padding-bottom: 0.7rem;
+  border-radius: 0.7rem;
+}
