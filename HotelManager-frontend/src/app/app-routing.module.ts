@@ -6,7 +6,6 @@ import { ContactComponent } from './component/contact/contact.component';
 import { LoginComponent } from './component/login/login.component';
 import { UserInfoComponent } from './component/user-info/user-info.component';
 import { AuthGuard } from './guard/auth.guard';
-import { RoomCreateComponent } from './component/room-create/room-create.component';
 import { RoomsComponent } from './component/rooms/rooms.component';
 import { RegisterComponent } from './component/register/register.component';
 import { MakeReservationComponent } from './component/make-reservation/make-reservation.component';
@@ -18,7 +17,6 @@ const routes: Routes = [
   { path: 'contact', component: ContactComponent },
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: RegisterComponent },
-  { path: 'room-create', component: RoomCreateComponent },
   { path: 'rooms', component: RoomsComponent },
   { path: 'make-reservation/:roomId', component: MakeReservationComponent },
   { path: 'my-reservations', component: MyReservationsComponent },
