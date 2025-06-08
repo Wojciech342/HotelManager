@@ -18,8 +18,16 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: RegisterComponent },
   { path: 'rooms', component: RoomsComponent },
-  { path: 'make-reservation/:roomId', component: MakeReservationComponent },
-  { path: 'my-reservations', component: MyReservationsComponent },
+  {
+    path: 'make-reservation/:roomId',
+    component: MakeReservationComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'my-reservations',
+    component: MyReservationsComponent,
+    canActivate: [AuthGuard],
+  },
   {
     path: 'user-info',
     component: UserInfoComponent,

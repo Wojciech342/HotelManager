@@ -7,7 +7,7 @@ export const AuthGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
 
   // check if any role from authorities list is in the routing list defined
-  if (tokenStorageService.getToken()) {
+  if (tokenStorageService.getToken() !== '{}') {
     return true; // Allow access if the user is logged in
   } else {
     router.navigate(['/login']); // Redirect to login if not authenticated
