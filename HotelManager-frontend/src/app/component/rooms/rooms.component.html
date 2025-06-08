@@ -70,9 +70,10 @@
 
     <!-- Rooms Table Section -->
     <div class="col-md-9">
-      <table class="table table-bordered">
+      <table class="table table-bordered align-middle">
         <thead>
           <tr>
+            <th>Image</th>
             <th>Number</th>
             <th>Type</th>
             <th>Capacity</th>
@@ -84,6 +85,16 @@
         </thead>
         <tbody>
           <tr *ngFor="let room of rooms">
+            <td style="width: 110px">
+              <img
+                *ngIf="room.imageUrl"
+                [src]="room.imageUrl"
+                alt="Room image"
+                class="img-thumbnail"
+                style="max-width: 100px; max-height: 70px; object-fit: cover"
+              />
+              <span *ngIf="!room.imageUrl" class="text-muted">No image</span>
+            </td>
             <td>{{ room.number }}</td>
             <td>{{ room.type }}</td>
             <td>{{ room.capacity }}</td>

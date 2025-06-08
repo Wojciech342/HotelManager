@@ -6,4 +6,5 @@ export interface Room {
   status: string;
   rating: number;
   pricePerNight: number;
+  imageUrl?: string;
 }
