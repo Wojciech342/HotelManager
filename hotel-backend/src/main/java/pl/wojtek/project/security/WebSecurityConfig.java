@@ -67,6 +67,8 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/rooms/**").permitAll()
                         .requestMatchers("/api/roomReservations/**").permitAll()
+                        .requestMatchers("/api/**").permitAll()
+                        .requestMatchers("/uploads/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 // Specify how to handle all unauthorized requests
