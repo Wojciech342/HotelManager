@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { RoomReservation } from '../model/roomReservation';
+import { RoomReview } from '../model/roomReview';
 
 @Injectable({
   providedIn: 'root',
@@ -37,6 +38,13 @@ export class RoomReservationService {
     return this.http.put<RoomReservation>(
       `${this.apiUrl}/${reservationId}`,
       roomReservation
+    );
+  }
+
+  addReviewToReservation(review: RoomReview, roomReservationId: number) {
+    return this.http.post(
+      `http://localhost:8080/api/room-reviews?roomReservationId=${roomReservationId}`,
+      review
     );
   }
 }
