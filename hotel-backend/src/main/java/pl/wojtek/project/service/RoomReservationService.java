@@ -57,9 +57,10 @@ public class RoomReservationService {
 
         // Add the reservation to the user's and room's reservation lists
         user.getReservations().add(roomReservation);
-        room.getRoomReservations().add(roomReservation);
+        room.getReservations().add(roomReservation);
 
         // Save the reservation
+        roomReservation.setImageUrl(room.getImageUrl());
         return roomReservationRepository.save(roomReservation);
     }
 

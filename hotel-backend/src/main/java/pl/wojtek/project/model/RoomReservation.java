@@ -19,4 +19,6 @@ public class RoomReservation extends Reservation {
     @OneToOne(cascade = CascadeType.ALL)
     private RoomReview review;
 
+    private String imageUrl;
+
 }

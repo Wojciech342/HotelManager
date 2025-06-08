@@ -1,6 +1,7 @@
 package pl.wojtek.project.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,13 +26,15 @@ public class Room {
     private String status;
     private double averageRating;
     private double pricePerNight;
+    private String imageUrl;
 
     @Enumerated(EnumType.STRING)
     private RoomType type;
 
-    @OneToMany
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
     private List<RoomReview> reviews = new ArrayList<>();
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
-    private List<RoomReservation> roomReservations = new ArrayList<>();
+    @JsonIgnoreProperties("room")
+    private List<RoomReservation> reservations = new ArrayList<>();
 
 }
