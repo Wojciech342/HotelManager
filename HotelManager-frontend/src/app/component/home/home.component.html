@@ -1,1 +1,147 @@
-<p>home works!</p>
+<div class="container-fluid p-0">
+  <!-- Hero Section -->
+  <div
+    class="bg-dark text-white text-center py-5"
+    style="
+      background: linear-gradient(120deg, #1e3c72 0%, #2a5298 100%);
+      min-height: 350px;
+    "
+  >
+    <div class="container">
+      <h1 class="display-3 fw-bold mb-3 animate__animated animate__fadeInDown">
+        Welcome to HotelManager
+      </h1>
+      <p class="lead mb-4 animate__animated animate__fadeInUp">
+        Effortlessly book your perfect stay, manage your reservations, and share
+        your experience with reviews.
+      </p>
+      <a
+        routerLink="/rooms"
+        class="btn btn-lg btn-primary shadow px-5 py-2 animate__animated animate__fadeInUp"
+      >
+        Explore Rooms
+      </a>
+    </div>
+  </div>
+
+  <!-- Features Section -->
+  <div class="container py-5">
+    <div divss="row text-center mb-5">
+      <div class="col">
+        <h2 class="fw-bold">Why Choose HotelManager?</h2>
+        <p class="text-muted">
+          Your all-in-one solution for hotel reservations and guest feedback.
+        </p>
+      </div>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card h-100 shadow border-0">
+          <div class="card-body">
+            <i class="bi bi-calendar2-check display-4 text-primary mb-3"></i>
+            <h5 class="card-title fw-bold">Easy Reservations</h5>
+            <p class="card-text text-muted">
+              Browse available rooms, check availability, and book your stay in
+              just a few clicks.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100 shadow border-0">
+          <div class="card-body">
+            <i class="bi bi-person-lines-fill display-4 text-success mb-3"></i>
+            <h5 class="card-title fw-bold">Manage Your Stays</h5>
+            <p class="card-text text-muted">
+              View, modify, or cancel your reservations anytime from your
+              personal dashboard.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100 shadow border-0">
+          <div class="card-body">
+            <i class="bi bi-star-fill display-4 text-warning mb-3"></i>
+            <h5 class="card-title fw-bold">Share Your Experience</h5>
+            <p class="card-text text-muted">
+              Leave reviews for your stays and help others choose the perfect
+              room.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Call to Action Section -->
+  <div class="bg-light py-5">
+    <div class="container text-center">
+      <h3 class="fw-bold mb-3">Ready to book your next stay?</h3>
+      <p class="mb-4 text-muted">
+        Sign up or log in to get started with HotelManager.
+      </p>
+      <a routerLink="/register" class="btn btn-outline-primary btn-lg me-2"
+        >Sign Up</a
+      >
+      <a routerLink="/login" class="btn btn-primary btn-lg">Log In</a>
+    </div>
+  </div>
+
+  <!-- Testimonials Section -->
+  <div class="container py-5">
+    <div class="row text-center mb-4">
+      <div class="col">
+        <h2 class="fw-bold">What Our Guests Say</h2>
+      </div>
+    </div>
+    <div class="row g-4 justify-content-center">
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body">
+            <p class="card-text fst-italic">
+              "Booking was a breeze and the room was perfect. Loved being able
+              to leave a review after my stay!"
+            </p>
+            <div class="d-flex align-items-center mt-3">
+              <img
+                src="https://randomuser.me/api/portraits/men/32.jpg"
+                alt="User"
+                class="rounded-circle me-3"
+                width="48"
+                height="48"
+              />
+              <div>
+                <span class="fw-bold">John D.</span><br />
+                <span class="text-warning">★★★★★</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body">
+            <p class="card-text fst-italic">
+              "I could manage all my reservations in one place. The review
+              system is a great touch!"
+            </p>
+            <div class="d-flex align-items-center mt-3">
+              <img
+                src="https://randomuser.me/api/portraits/women/44.jpg"
+                alt="User"
+                class="rounded-circle me-3"
+                width="48"
+                height="48"
+              />
+              <div>
+                <span class="fw-bold">Anna K.</span><br />
+                <span class="text-warning">★★★★★</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
