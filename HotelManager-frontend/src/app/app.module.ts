@@ -9,7 +9,6 @@ import { FormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { provideHttpClient, withFetch } from '@angular/common/http';
-import { RoomCreateComponent } from './component/room-create/room-create.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NavbarComponent } from './component/navbar/navbar.component';
 import { HomeComponent } from './component/home/home.component';
@@ -26,11 +25,12 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MyReservationsComponent } from './component/my-reservations/my-reservations.component';
+import { FooterComponent } from './component/footer/footer.component';
+import { StarRatingComponent } from './component/star-rating/star-rating.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    RoomCreateComponent,
     NavbarComponent,
     HomeComponent,
     AboutComponent,
@@ -41,6 +41,8 @@ import { MyReservationsComponent } from './component/my-reservations/my-reservat
     RegisterComponent,
     MakeReservationComponent,
     MyReservationsComponent,
+    FooterComponent,
+    StarRatingComponent,
   ],
   imports: [
     BrowserModule,
