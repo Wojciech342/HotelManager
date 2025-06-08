@@ -27,6 +27,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MyReservationsComponent } from './component/my-reservations/my-reservations.component';
 import { FooterComponent } from './component/footer/footer.component';
 import { StarRatingComponent } from './component/star-rating/star-rating.component';
+import { NgxSliderModule } from '@angular-slider/ngx-slider';
 
 @NgModule({
   declarations: [
@@ -52,6 +53,7 @@ import { StarRatingComponent } from './component/star-rating/star-rating.compone
     MatDatepickerModule,
     MatNativeDateModule,
     MatInputModule,
+    NgxSliderModule,
   ],
   providers: [
     provideClientHydration(),

@@ -1,0 +1,101 @@
+.room-card {
+  transition: box-shadow 0.2s, transform 0.2s;
+  border-radius: 1rem;
+  min-height: 180px;
+}
+.room-card:hover {
+  box-shadow: 0 8px 32px rgba(30, 60, 114, 0.12),
+    0 1.5px 6px rgba(42, 82, 152, 0.08);
+  transform: translateY(-2px) scale(1.01);
+}
+.room-img-wrapper {
+  border-top-left-radius: 1rem;
+  border-bottom-left-radius: 1rem;
+  overflow: hidden;
+  min-height: 180px;
+}
+.card-body {
+  padding: 1.5rem;
+  top: 1.5rem;
+  z-index: 2;
+  background: #fff;
+  border-radius: 1rem;
+}
+@media (max-width: 991.98px) {
+  .room-card {
+    flex-direction: column !important;
+    min-height: unset;
+  }
+  .room-img-wrapper {
+    border-radius: 1rem 1rem 0 0 !important;
+    min-width: 100%;
+    min-height: 160px;
+  }
+}
+
+.card-body {
+  padding: 2rem 1.5rem;
+}
+.form-range {
+  height: 1.5rem;
+  background: transparent;
+}
+input[type="range"]::-webkit-slider-thumb {
+  background: #2a5298;
+}
+input[type="range"]:focus {
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(42, 82, 152, 0.15);
+}
+input[type="range"]::-moz-range-thumb {
+  background: #2a5298;
+}
+input[type="range"]::-ms-thumb {
+  background: #2a5298;
+}
+input[type="range"]::-webkit-slider-thumb {
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+}
+input[type="range"]::-moz-range-thumb {
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+}
+input[type="range"]::-ms-thumb {
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 3px;
+  background: #e3e6ed;
+}
+input[type="range"]::-moz-range-track {
+  height: 6px;
+  border-radius: 3px;
+  background: #e3e6ed;
+}
+input[type="range"]::-ms-fill-lower,
+input[type="range"]::-ms-fill-upper {
+  background: #e3e6ed;
+}
+input[type="range"]:focus::-webkit-slider-thumb {
+  box-shadow: 0 0 0 0.2rem rgba(42, 82, 152, 0.15);
+}
+input[type="range"]:focus::-moz-range-thumb {
+  box-shadow: 0 0 0 0.2rem rgba(42, 82, 152, 0.15);
+}
+input[type="range"]:focus::-ms-thumb {
+  box-shadow: 0 0 0 0.2rem rgba(42, 82, 152, 0.15);
+}
+
+.sidebar-sticky {
+  position: sticky;
+  top: 1.5rem;
+  align-self: flex-start;
+  z-index: 20;
+  height: fit-content;
+}

@@ -13,6 +13,16 @@ export class RoomsComponent implements OnInit {
   filterForm: FormGroup;
   roomTypes: string[] = ['SINGLE', 'DOUBLE', 'FAMILY', 'SUITE', 'DELUXE']; // Available room types
   selectedTypes: string[] = []; // Tracks selected room types
+  isBrowser = typeof window !== 'undefined';
+
+  minValue: number = 0;
+  maxValue: number = 1000;
+  sliderOptions: any = {
+    floor: 0,
+    ceil: 1000,
+    step: 10,
+    translate: (value: number): string => `${value} zł`,
+  };
 
   constructor(private roomService: RoomService, private fb: FormBuilder) {
     this.filterForm = this.fb.group({
@@ -24,6 +34,10 @@ export class RoomsComponent implements OnInit {
 
   ngOnInit(): void {
     this.getRooms();
+    this.filterForm.patchValue({
+      minPrice: this.minValue,
+      maxPrice: this.maxValue,
+    });
   }
 
   getRooms(filters: any = {}): void {
@@ -56,5 +70,10 @@ export class RoomsComponent implements OnInit {
         (type) => type !== checkbox.value
       );
     }
+  }
+
+  roundToOneDecimal(value: number | null | undefined): string {
+    if (value == null) return 'N/A';
+    return (Math.round(value * 10) / 10).toFixed(1);
   }
 }
