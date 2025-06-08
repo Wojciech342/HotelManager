@@ -23,10 +23,9 @@ public class RoomReviewController {
 
     @PostMapping
     public ResponseEntity<RoomReview> createReview(
-            @RequestParam String username,
-            @RequestParam Long roomId,
+            @RequestParam Long roomReservationId,
             @RequestBody RoomReview review) {
-        RoomReview roomReview = roomReviewService.createReview(username, roomId, review);
+        RoomReview roomReview = roomReviewService.createReview(roomReservationId, review);
         return new ResponseEntity<>(roomReview, HttpStatus.CREATED);
     }
 
