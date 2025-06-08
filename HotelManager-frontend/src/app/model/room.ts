@@ -1,3 +1,5 @@
+import { RoomReview } from './roomReview';
+
 export interface Room {
   id?: number;
   number: number;
@@ -7,4 +9,5 @@ export interface Room {
   status: string;
   pricePerNight: number;
   imageUrl?: string;
+  reviews?: RoomReview[];
 }

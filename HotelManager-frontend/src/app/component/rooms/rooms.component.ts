@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { RoomService } from '../../service/room.service';
 import { Room } from '../../model/room';
+import { RoomReview } from '../../model/roomReview';
 
 @Component({
   selector: 'app-rooms',
@@ -23,6 +24,9 @@ export class RoomsComponent implements OnInit {
     step: 10,
     translate: (value: number): string => `${value} zł`,
   };
+
+  showReviewsModal = false;
+  selectedRoomReviews: RoomReview[] = [];
 
   constructor(private roomService: RoomService, private fb: FormBuilder) {
     this.filterForm = this.fb.group({
@@ -75,5 +79,15 @@ export class RoomsComponent implements OnInit {
   roundToOneDecimal(value: number | null | undefined): string {
     if (value == null) return 'N/A';
     return (Math.round(value * 10) / 10).toFixed(1);
+  }
+
+  openReviewsModal(room: Room | undefined) {
+    this.selectedRoomReviews = room?.reviews ?? [];
+    this.showReviewsModal = true;
+  }
+
+  closeReviewsModal() {
+    this.showReviewsModal = false;
+    this.selectedRoomReviews = [];
   }
 }

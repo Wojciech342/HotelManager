@@ -118,10 +118,6 @@
                     ><i class="bi bi-people-fill me-1"></i> Capacity:
                     {{ room.capacity }}</span
                   >
-                  <span class="me-3"
-                    ><i class="bi bi-door-open me-1"></i> Status:
-                    {{ room.status }}</span
-                  >
                 </div>
                 <div class="mb-2">
                   <span class="me-3">
@@ -147,6 +143,15 @@
                   Make a Reservation
                 </button>
               </div>
+              <!-- Add this button inside each room card, below the reservation button -->
+              <div class="mt-2">
+                <button
+                  class="btn btn-outline-info"
+                  (click)="openReviewsModal(room)"
+                >
+                  <i class="bi bi-chat-dots me-1"></i>See Reviews
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -155,6 +160,52 @@
             No rooms found matching your criteria.
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Reviews Modal Backdrop -->
+<div *ngIf="showReviewsModal" class="modal-backdrop-custom"></div>
+<!-- Reviews Modal -->
+<div *ngIf="showReviewsModal" class="modal-dialog-custom modal-dialog-reviews">
+  <div class="modal-header-custom mb-3">
+    <i class="bi bi-chat-dots text-info fs-3 me-2"></i>
+    <span class="fw-bold fs-4 text-primary">Room Reviews</span>
+    <button
+      type="button"
+      class="btn-close ms-auto"
+      aria-label="Close"
+      (click)="closeReviewsModal()"
+    >
+      x
+    </button>
+  </div>
+  <div
+    *ngIf="selectedRoomReviews?.length === 0"
+    class="alert alert-info text-center rounded-3 shadow-sm"
+  >
+    <i class="bi bi-info-circle me-2"></i>
+    There are no reviews for this room yet.
+  </div>
+  <div *ngIf="(selectedRoomReviews?.length ?? 0) > 0" class="reviews-list">
+    <div
+      *ngFor="let review of selectedRoomReviews"
+      class="review-item mb-4 p-3 rounded-3 shadow-sm"
+    >
+      <div class="d-flex align-items-center mb-2">
+        <i class="bi bi-person-circle fs-4 text-secondary me-2"></i>
+        <span class="fw-semibold text-dark">{{ review.username }}</span>
+      </div>
+      <div class="text-muted fst-italic mb-1" style="font-size: 1.05rem">
+        "{{ review.description }}"
+      </div>
+      <div>
+        <app-star-rating
+          [ngModel]="review.rating"
+          [readonly]="true"
+          size="sm"
+        ></app-star-rating>
       </div>
     </div>
   </div>
