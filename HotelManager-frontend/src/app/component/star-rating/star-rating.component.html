@@ -1,0 +1,19 @@
+<span class="star-rating">
+  <ng-container *ngFor="let star of stars">
+    <i
+      class="bi"
+      [ngClass]="{
+        'bi-star-fill': (hoverRating ?? rating) >= star,
+        'bi-star-half':
+          (hoverRating ?? rating) >= star - 0.5 &&
+          (hoverRating ?? rating) < star,
+        'bi-star': (hoverRating ?? rating) < star - 0.5
+      }"
+      (mousemove)="!readonly && setHover(getMouseValue($event, star))"
+      (mouseleave)="setHover(null)"
+      (click)="!readonly && setRating(getMouseValue($event, star))"
+      [style.cursor]="readonly ? 'default' : 'pointer'"
+      style="font-size: 2rem; color: #ffc107"
+    ></i>
+  </ng-container>
+</span>

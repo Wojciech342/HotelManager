@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms'; // <-- import
 import { RoomReservation } from '../../model/roomReservation';
 import { RoomReservationService } from '../../service/room-reservation.service';
+import { RoomReview } from '../../model/roomReview';
 
 @Component({
   selector: 'app-my-reservations',
@@ -11,7 +13,17 @@ export class MyReservationsComponent implements OnInit {
   reservations: RoomReservation[] = [];
   username: string | null = null;
 
-  constructor(private reservationService: RoomReservationService) {}
+  // Modal state
+  showReviewModal = false;
+  reviewReservation: RoomReservation | null = null;
+  submittingReview = false;
+
+  reviewForm!: FormGroup; // <-- add
+
+  constructor(
+    private reservationService: RoomReservationService,
+    private fb: FormBuilder // <-- add
+  ) {}
 
   ngOnInit(): void {
     if (typeof window !== 'undefined') {
@@ -20,6 +32,13 @@ export class MyReservationsComponent implements OnInit {
         this.loadReservations();
       }
     }
+    this.reviewForm = this.fb.group({
+      description: ['', Validators.required],
+      rating: [
+        null,
+        [Validators.required, Validators.min(1), Validators.max(5)],
+      ],
+    });
   }
 
   loadReservations() {
@@ -32,16 +51,55 @@ export class MyReservationsComponent implements OnInit {
   }
 
   canMakeReview(reservation: RoomReservation): boolean {
-    const today = new Date();
-    const start = new Date(reservation.startDate);
-    return today >= start && !reservation.roomReview;
+    // const today = new Date();
+    // const start = new Date(reservation.startDate + 'T00:00:00');
+    // return today >= start && !reservation.roomReview;
+    return true;
+  }
+
+  openReviewModal(reservation: RoomReservation) {
+    this.reviewReservation = reservation;
+    this.reviewForm.reset(); // <-- reset form
+    this.showReviewModal = true;
+  }
+
+  closeReviewModal() {
+    this.showReviewModal = false;
+    this.reviewReservation = null;
+    this.reviewForm.reset();
+  }
+
+  submitReview() {
+    if (!this.reviewReservation || !this.username || this.reviewForm.invalid)
+      return;
+    this.submittingReview = true;
+    const review: RoomReview = {
+      description: this.reviewForm.value.description,
+      rating: this.reviewForm.value.rating,
+      username: this.username,
+    };
+
+    this.reservationService
+      .addReviewToReservation(review, this.reviewReservation.id!)
+      .subscribe({
+        next: () => {
+          this.submittingReview = false;
+          this.closeReviewModal();
+          this.loadReservations();
+        },
+        error: (err) => {
+          alert(
+            'Failed to submit review: ' + (err.error?.message || err.message)
+          );
+          this.submittingReview = false;
+        },
+      });
   }
 
   canCancel(reservation: RoomReservation): boolean {
-    // const today = new Date();
-    // const start = new Date(reservation.startDate);
-    // return today < start && reservation.status !== 'CANCELLED';
-    return true;
+    const today = new Date();
+    const start = new Date(reservation.startDate + 'T00:00:00');
+    return today < start && reservation.status !== 'CANCELLED';
   }
 
   onCancel(reservation: RoomReservation) {
@@ -58,9 +116,5 @@ export class MyReservationsComponent implements OnInit {
             ),
         });
     }
-  }
-
-  onMakeReview(reservation: RoomReservation) {
-    // TODO: Implement review logic
   }
 }

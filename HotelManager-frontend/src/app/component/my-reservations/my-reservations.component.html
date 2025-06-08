@@ -1,8 +1,11 @@
+<!-- my-reservations.component.html (updated) -->
 <div class="container mt-4">
   <h2 class="mb-4">My Reservations</h2>
+
   <div *ngIf="reservations.length === 0" class="alert alert-info">
     You have no reservations.
   </div>
+
   <div *ngFor="let reservation of reservations" class="card mb-3">
     <div class="card-body">
       <h5 class="card-title">
@@ -10,8 +13,7 @@
       </h5>
       <p class="card-text">
         <strong>Stay:</strong>
-        {{ reservation.startDate }} &mdash; {{ reservation.endDate }}
-        <br />
+        {{ reservation.startDate }} &mdash; {{ reservation.endDate }}<br />
         <strong>Status:</strong> {{ reservation.status }}<br />
         <strong>Price:</strong> {{ reservation.price | currency }}
       </p>
@@ -21,7 +23,7 @@
       <button
         *ngIf="canMakeReview(reservation)"
         class="btn btn-primary me-2"
-        (click)="onMakeReview(reservation)"
+        (click)="openReviewModal(reservation)"
       >
         Make Review
       </button>
@@ -35,3 +37,83 @@
     </div>
   </div>
 </div>
+
+<!-- place backdrop first -->
+<div *ngIf="showReviewModal" class="modal-backdrop-custom"></div>
+
+<!-- then the modal on top -->
+<form
+  *ngIf="showReviewModal"
+  [formGroup]="reviewForm"
+  (ngSubmit)="submitReview()"
+  class="modal-dialog-custom"
+>
+  <h5>Add Review</h5>
+  <div class="mb-3">
+    <label>Description</label>
+    <textarea
+      formControlName="description"
+      class="form-control"
+      rows="3"
+    ></textarea>
+  </div>
+  <div class="mb-3">
+    <label>Rating</label>
+    <app-star-rating formControlName="rating"></app-star-rating>
+    <div
+      *ngIf="
+        reviewForm.controls['rating'].invalid &&
+        reviewForm.controls['rating'].touched
+      "
+      class="text-danger"
+    >
+      Please select a rating.
+    </div>
+  </div>
+  <div class="d-flex justify-content-end">
+    <button
+      class="btn btn-secondary me-2"
+      type="button"
+      (click)="closeReviewModal()"
+      [disabled]="submittingReview"
+    >
+      Cancel
+    </button>
+    <button
+      class="btn btn-success"
+      type="submit"
+      [disabled]="submittingReview || reviewForm.invalid"
+    >
+      Submit
+    </button>
+  </div>
+</form>
+
+<!-- add this to my-reservations.component.css -->
+<style>
+  /* backdrop fixed full-screen */
+  .modal-backdrop-custom {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1050;
+  }
+
+  /* wrapper for modal without transform on form itself */
+  .modal-dialog-custom {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    /* apply transform here, not on an inner element */
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    max-width: 400px;
+    width: 100%;
+    z-index: 1060;
+  }
+</style>
