@@ -12,16 +12,16 @@ public class RoomSpecifications {
 
     public static Specification<Room> hasMinRating(Double minRating) {
         return (root, query, cb) ->
-                cb.greaterThanOrEqualTo(root.get("rating"), minRating);
+                cb.greaterThanOrEqualTo(root.get("averageRating"), minRating);
     }
 
     public static Specification<Room> hasPriceLessThan(Double maxPrice) {
         return (root, query, cb) ->
-                cb.lessThan(root.get("pricePerNight"), maxPrice);
+                cb.lessThanOrEqualTo(root.get("pricePerNight"), maxPrice);
     }
 
     public static Specification<Room> hasPriceGreaterThan(Double minPrice) {
-        return (root, query, cb) -> cb.greaterThan(root.get("pricePerNight"), minPrice);
+        return (root, query, cb) -> cb.greaterThanOrEqualTo(root.get("pricePerNight"), minPrice);
     }
 }
 
