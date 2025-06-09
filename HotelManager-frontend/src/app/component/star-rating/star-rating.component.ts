@@ -51,10 +51,6 @@ export class StarRatingComponent implements ControlValueAccessor {
     this.onTouched = fn;
   }
 
-  setDisabledState?(isDisabled: boolean): void {
-    this.readonly = isDisabled;
-  }
-
   setHover(value: number | null) {
     if (!this.readonly) {
       this.hoverRating = value;
