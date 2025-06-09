@@ -14,7 +14,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/rooms")
-@CrossOrigin(origins = "http://localhost:4200")
 public class RoomController {
 
     private final RoomService roomService;
@@ -46,12 +45,19 @@ public class RoomController {
         return new ResponseEntity<>(createdRoom, HttpStatus.CREATED);
     }
 
-    @PostMapping("/{roomId}/image")
-    public ResponseEntity<Room> uploadRoomImage(
+    @PutMapping("/{roomId}/image")
+    public ResponseEntity<Room> updateRoomImage(
             @PathVariable Long roomId,
             @RequestParam("image") MultipartFile image) throws IOException {
-        Room updatedRoom = roomService.saveRoomImage(roomId, image);
-        return ResponseEntity.ok(updatedRoom);
+        Room updatedRoom = roomService.updateRoomImage(roomId, image);
+        return new ResponseEntity<>(updatedRoom, HttpStatus.OK);
+    }
+
+    @PutMapping("/image")
+    public ResponseEntity<List<Room>> updateAllRoomsImage(
+            @RequestParam("image") MultipartFile image) throws IOException {
+        List<Room> updatedRooms = roomService.updateAllRoomsImage(image);
+        return new ResponseEntity<>(updatedRooms, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

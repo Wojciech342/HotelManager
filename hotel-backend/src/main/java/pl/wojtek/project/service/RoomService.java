@@ -31,7 +31,8 @@ public class RoomService {
     }
 
     public Room getRoomById(long id) {
-        Room room = roomRepository.findById(id).orElse(null);
+        Room room = roomRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Room", "id", id));
         return room;
     }
 
@@ -69,18 +70,24 @@ public class RoomService {
         return roomRepository.findAll(spec);
     }
 
-    public Room saveRoomImage(Long roomId, MultipartFile image) throws IOException {
+    public Room updateRoomImage(Long roomId, MultipartFile image) throws IOException {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new RuntimeException("Room not found"));
 
-        // Save file to disk (or cloud)
         String fileName = "room_" + roomId + "_" + System.currentTimeMillis() + "_" + image.getOriginalFilename();
         Path imagePath = Paths.get("uploads/rooms/" + fileName);
         Files.createDirectories(imagePath.getParent());
         Files.write(imagePath, image.getBytes());
 
-        // Set image URL (assuming you serve /uploads as static resources)
         room.setImageUrl("http://localhost:8080/uploads/rooms/" + fileName);
         return roomRepository.save(room);
+    }
+
+    public List<Room> updateAllRoomsImage(MultipartFile image) throws IOException {
+        List<Room> rooms = roomRepository.findAll();
+        for (Room room : rooms) {
+            updateRoomImage(room.getId(), image);
+        }
+        return rooms;
     }
 }
