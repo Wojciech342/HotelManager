@@ -13,6 +13,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import pl.wojtek.project.security.service.UserDetailsServiceImpl;
 import java.io.IOException;
 
+// This filter never sends a response itself, it just sets up authentication if possible.
 public class JwtAuthTokenFilter extends OncePerRequestFilter {
 
     @Autowired
@@ -34,11 +35,14 @@ public class JwtAuthTokenFilter extends OncePerRequestFilter {
                         userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
 
+                // set the user to be authenticated
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception e) {
             logger.error("Can NOT set user authentication -> Message: {}", e);
         }
+
+        // Passes the request and response to the next filter in the chain
         filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 
