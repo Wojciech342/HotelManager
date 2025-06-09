@@ -14,7 +14,6 @@ export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
   isLoginFailed = false;
   errorMessage = '';
-  roles: string[] = [];
   private loginInfo?: LoginInfo;
 
   public authService = inject(AuthService);
@@ -27,10 +26,6 @@ export class LoginComponent implements OnInit {
       username: ['', Validators.required],
       password: ['', [Validators.required, Validators.minLength(6)]],
     });
-
-    if (this.tokenStorage.getToken() !== '{}') {
-      this.roles = this.tokenStorage.getAuthorities();
-    }
   }
 
   onSubmit() {
@@ -49,7 +44,6 @@ export class LoginComponent implements OnInit {
         this.tokenStorage.saveAuthorities(data.authorities || []);
 
         this.isLoginFailed = false;
-        this.roles = this.tokenStorage.getAuthorities();
 
         this.loginForm.reset();
 
