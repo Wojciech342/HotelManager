@@ -4,5 +4,5 @@ import { RoomReview } from './roomReview';
 
 export interface RoomReservation extends Reservation {
   room?: Room;
-  roomReview?: RoomReview;
+  review?: RoomReview;
 }
