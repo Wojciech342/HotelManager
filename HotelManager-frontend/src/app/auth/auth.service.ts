@@ -32,10 +32,10 @@ export class AuthService {
 
   get isLoggedIn(): boolean {
     const token = this.tokenStorage.getToken();
-    return token != null && token !== '{}'; // Check if a valid token exists
+    return token != null && token !== '{}';
   }
 
   logout(): void {
-    this.tokenStorage.signOut(); // Clear token and other user data
+    this.tokenStorage.signOut();
   }
 }
