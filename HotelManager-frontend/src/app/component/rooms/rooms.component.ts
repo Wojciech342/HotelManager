@@ -12,8 +12,8 @@ import { RoomReview } from '../../model/roomReview';
 export class RoomsComponent implements OnInit {
   rooms: Room[] = [];
   filterForm: FormGroup;
-  roomTypes: string[] = ['SINGLE', 'DOUBLE', 'FAMILY', 'SUITE', 'DELUXE']; // Available room types
-  selectedTypes: string[] = []; // Tracks selected room types
+  roomTypes: string[] = ['SINGLE', 'DOUBLE', 'FAMILY', 'SUITE', 'DELUXE'];
+  selectedTypes: string[] = [];
   isBrowser = typeof window !== 'undefined';
 
   minValue: number = 0;
@@ -22,7 +22,7 @@ export class RoomsComponent implements OnInit {
     floor: 0,
     ceil: 1000,
     step: 10,
-    translate: (value: number): string => `${value} zł`,
+    translate: (value: number): string => `${value}`,
   };
 
   showReviewsModal = false;
@@ -46,7 +46,7 @@ export class RoomsComponent implements OnInit {
 
   getRooms(filters: any = {}): void {
     if (this.selectedTypes.length > 0) {
-      filters.type = this.selectedTypes; // Send selected types as a comma-separated string
+      filters.type = this.selectedTypes;
     }
     this.roomService.getFilteredRooms(filters).subscribe({
       next: (rooms) => (this.rooms = rooms),
@@ -78,7 +78,7 @@ export class RoomsComponent implements OnInit {
 
   roundToOneDecimal(value: number | null | undefined): string {
     if (value == null) return 'N/A';
-    return (Math.round(value * 10) / 10).toFixed(1);
+    return value.toFixed(1);
   }
 
   openReviewsModal(room: Room | undefined) {
