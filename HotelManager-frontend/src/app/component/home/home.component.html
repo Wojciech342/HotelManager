@@ -4,7 +4,7 @@
     class="bg-dark text-white text-center py-5"
     style="
       background: linear-gradient(120deg, #1e3c72 0%, #2a5298 100%);
-      min-height: 350px;
+      min-height: 300px;
     "
   >
     <div class="container">
@@ -75,7 +75,7 @@
   </div>
 
   <!-- Call to Action Section -->
-  <div class="bg-light py-5">
+  <div class="bg-light py-5" *ngIf="!authService.isLoggedIn">
     <div class="container text-center">
       <h3 class="fw-bold mb-3">Ready to book your next stay?</h3>
       <p class="mb-4 text-muted">
@@ -105,14 +105,14 @@
             </p>
             <div class="d-flex align-items-center mt-3">
               <img
-                src="https://randomuser.me/api/portraits/men/32.jpg"
+                src="https://randomuser.me/api/portraits/lego/4.jpg"
                 alt="User"
                 class="rounded-circle me-3"
                 width="48"
                 height="48"
               />
               <div>
-                <span class="fw-bold">John D.</span><br />
+                <span class="fw-bold">Johnny</span><br />
                 <span class="text-warning">★★★★★</span>
               </div>
             </div>
@@ -128,14 +128,14 @@
             </p>
             <div class="d-flex align-items-center mt-3">
               <img
-                src="https://randomuser.me/api/portraits/women/44.jpg"
+                src="https://randomuser.me/api/portraits/lego/5.jpg"
                 alt="User"
                 class="rounded-circle me-3"
                 width="48"
                 height="48"
               />
               <div>
-                <span class="fw-bold">Anna K.</span><br />
+                <span class="fw-bold">Thomas</span><br />
                 <span class="text-warning">★★★★★</span>
               </div>
             </div>
