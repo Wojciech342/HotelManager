@@ -2,6 +2,7 @@ package pl.wojtek.project.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.wojtek.project.exception.ResourceNotFoundException;
 import pl.wojtek.project.model.Room;
 import pl.wojtek.project.model.RoomReservation;
@@ -33,6 +34,7 @@ public class RoomReviewService {
         this.roomReservationRepository = roomReservationRepository;
     }
 
+    @Transactional
     public RoomReview createReview(Long roomReservationId, RoomReview review) {
         RoomReservation roomReservation = roomReservationRepository.findById(roomReservationId)
                 .orElseThrow(() -> new ResourceNotFoundException("RoomReservation", "id", roomReservationId));
@@ -90,8 +92,12 @@ public class RoomReviewService {
     public RoomReview updateReview(Long id, RoomReview updatedReview) {
         RoomReview review = roomReviewRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("RoomReview", "id", id));
-        review.setDescription(updatedReview.getDescription());
-        review.setRating(updatedReview.getRating());
+        if(updatedReview.getDescription() != null) {
+            review.setDescription(updatedReview.getDescription());
+        }
+        if(updatedReview.getRating() != null) {
+            review.setRating(updatedReview.getRating());
+        }
         return roomReviewRepository.save(review);
     }
 
