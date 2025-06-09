@@ -1,16 +1,15 @@
 import { CanActivateFn, Router } from '@angular/router';
-import { TokenStorageService } from '../auth/token-storage.service';
 import { inject } from '@angular/core';
+import { AuthService } from '../auth/auth.service';
 
-export const AuthGuard: CanActivateFn = (route, state) => {
-  const tokenStorageService = inject(TokenStorageService);
+export const AuthGuard: CanActivateFn = () => {
+  const authService = inject(AuthService);
   const router = inject(Router);
 
-  // check if any role from authorities list is in the routing list defined
-  if (tokenStorageService.getToken() !== '{}') {
-    return true; // Allow access if the user is logged in
+  if (authService.isLoggedIn) {
+    return true;
   } else {
-    router.navigate(['/login']); // Redirect to login if not authenticated
+    router.navigate(['/login']);
     return false;
   }
 };
