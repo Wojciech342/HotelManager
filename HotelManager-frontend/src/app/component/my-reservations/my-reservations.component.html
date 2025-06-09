@@ -40,7 +40,7 @@
               <span class="badge bg-secondary ms-2">{{
                 reservation.room?.type
               }}</span>
-              <span *ngIf="reservation.roomReview" class="badge bg-success ms-2"
+              <span *ngIf="reservation.review" class="badge bg-success ms-2"
                 >Reviewed</span
               >
             </div>
@@ -67,27 +67,24 @@
                 >
               </span>
             </div>
-            <div *ngIf="reservation.roomReview" class="mb-2">
-              <span class="fw-semibold">Your Review:</span>
-              <div class="d-flex align-items-center gap-2 mt-1">
-                <app-star-rating
-                  [ngModel]="reservation.roomReview.rating"
-                  [readonly]="true"
-                ></app-star-rating>
-                <span class="text-muted small">{{
-                  reservation.roomReview.description
-                }}</span>
-              </div>
-            </div>
           </div>
           <div class="mt-3 d-flex gap-2 flex-wrap">
             <button
-              *ngIf="canMakeReview(reservation) && !reservation.roomReview"
+              *ngIf="canMakeReview(reservation) && !reservation.review"
               class="btn btn-outline-primary"
               (click)="openReviewModal(reservation)"
             >
               <i class="bi bi-star me-1"></i>Make Review
             </button>
+            <ng-container *ngIf="reservation.review">
+              <div class="d-flex align-items-center gap-2">
+                <app-star-rating
+                  [ngModel]="reservation.review.rating"
+                  [readonly]="true"
+                  size="sm"
+                ></app-star-rating>
+              </div>
+            </ng-container>
             <button
               *ngIf="canCancel(reservation)"
               class="btn btn-outline-danger"
@@ -162,41 +159,3 @@
     </div>
   </form>
 </div>
-
-<!-- add this to my-reservations.component.css -->
-<style>
-  /* backdrop fixed full-screen */
-  .modal-backdrop-custom {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1050;
-  }
-
-  /* wrapper for modal without transform on form itself */
-  .modal-dialog-custom {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    /* apply transform here, not on an inner element */
-    transform: translate(-50%, -50%);
-    background: white;
-    padding: 2rem;
-    border-radius: 8px;
-    max-width: 400px;
-    width: 100%;
-    z-index: 1060;
-  }
-
-  .modal-header-custom {
-    display: flex;
-    align-items: center;
-  }
-
-  .description-area {
-    resize: none;
-  }
-</style>

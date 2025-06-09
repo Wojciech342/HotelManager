@@ -18,11 +18,11 @@ export class MyReservationsComponent implements OnInit {
   reviewReservation: RoomReservation | null = null;
   submittingReview = false;
 
-  reviewForm!: FormGroup; // <-- add
+  reviewForm!: FormGroup;
 
   constructor(
     private reservationService: RoomReservationService,
-    private fb: FormBuilder // <-- add
+    private fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
@@ -51,15 +51,15 @@ export class MyReservationsComponent implements OnInit {
   }
 
   canMakeReview(reservation: RoomReservation): boolean {
-    // const today = new Date();
-    // const start = new Date(reservation.startDate + 'T00:00:00');
-    // return today >= start && !reservation.roomReview;
-    return true;
+    if (reservation.review !== null) return false;
+    const today = new Date();
+    const start = new Date(reservation.startDate + 'T00:00:00');
+    return today >= start && !reservation.review;
   }
 
   openReviewModal(reservation: RoomReservation) {
     this.reviewReservation = reservation;
-    this.reviewForm.reset(); // <-- reset form
+    this.reviewForm.reset();
     this.showReviewModal = true;
   }
 
