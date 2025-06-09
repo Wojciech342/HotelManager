@@ -5,7 +5,6 @@ import { RoomService } from '../../service/room.service';
 import { Room } from '../../model/room';
 import { RoomReservationService } from '../../service/room-reservation.service';
 import { RoomReservation } from '../../model/roomReservation';
-import { start } from 'repl';
 
 @Component({
   selector: 'app-make-reservation',
@@ -54,12 +53,14 @@ export class MakeReservationComponent implements OnInit {
 
     this.dateFilter = (date: Date | null): boolean => {
       if (!date) return false;
-      // Only allow today or future dates, and not in any reserved range
+      // Only allow today or future dates, and not in any reserved range (except CANCELLED)
       if (date < this.minDate) return false;
-      return !this.existingReservations.some(
-        (res) =>
-          new Date(res.startDate) <= date && date <= new Date(res.endDate)
-      );
+      return !this.existingReservations
+        .filter((res) => res.status !== 'CANCELLED')
+        .some(
+          (res) =>
+            new Date(res.startDate) <= date && date <= new Date(res.endDate)
+        );
     };
   }
 
@@ -67,17 +68,8 @@ export class MakeReservationComponent implements OnInit {
     if (this.room) {
       const { startDate, endDate } = this.reservationForm.value;
       if (startDate && endDate) {
-        // Always convert to yyyy-MM-dd string, then to Date at local midnight
-        const startStr =
-          typeof startDate === 'string'
-            ? startDate
-            : startDate.toLocaleDateString('en-CA');
-        const endStr =
-          typeof endDate === 'string'
-            ? endDate
-            : endDate.toLocaleDateString('en-CA');
-        const start = new Date(startStr + 'T00:00:00');
-        const end = new Date(endStr + 'T00:00:00');
+        const start = startDate as Date;
+        const end = endDate as Date;
         const days = Math.round(
           (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
         );
@@ -88,44 +80,32 @@ export class MakeReservationComponent implements OnInit {
     }
   }
 
+  formatDate(date: Date): string {
+    const year = date.getFullYear();
+    // padStart ensures two digits for month and day: yyyy-MM-dd format
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
   onSubmit() {
     if (this.reservationForm.invalid || !this.room) return;
-
-    const username = localStorage.getItem('AuthUsername');
-    if (!username) {
-      alert('You must be logged in to make a reservation.');
-      return;
-    }
 
     const { startDate, endDate } = this.reservationForm.value;
     const reservationDate = new Date().toISOString();
 
-    console.log(startDate);
-    console.log(endDate);
-
-    // Use yyyy-MM-dd format for startDate and endDate if backend expects LocalDate
-    const formattedStartDate =
-      typeof startDate === 'string'
-        ? startDate
-        : startDate.toLocaleDateString('en-CA'); // 'yyyy-MM-dd'
-    const formattedEndDate =
-      typeof endDate === 'string'
-        ? endDate
-        : endDate.toLocaleDateString('en-CA');
-
     const reservation: RoomReservation = {
       reservationDate,
-      startDate: formattedStartDate,
-      endDate: formattedEndDate,
+      startDate: this.formatDate(startDate),
+      endDate: this.formatDate(endDate),
       price: this.totalPrice ?? 0,
       status: 'PENDING',
     };
 
-    console.log(formattedStartDate);
-    console.log(formattedEndDate);
+    const username = localStorage.getItem('AuthUsername');
 
     this.roomReservationService
-      .createRoomReservation(username, this.room.id!, reservation)
+      .createRoomReservation(username!, this.room.id!, reservation)
       .subscribe({
         next: () => {
           this.router.navigate(['/rooms']);
