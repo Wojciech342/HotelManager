@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import pl.wojtek.project.exception.ResourceNotFoundException;
 import pl.wojtek.project.message.request.LoginForm;
 import pl.wojtek.project.message.request.SignUpForm;
 import pl.wojtek.project.message.response.JwtResponse;
@@ -25,7 +26,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 @RequestMapping("/api/auth")
 public class AuthController {
 
@@ -111,14 +111,10 @@ public class AuthController {
         return ResponseEntity.ok(user);
     }
 
-    @GetMapping("/user/{id}")
-    public ResponseEntity<User> getUserById(Authentication authentication, @PathVariable Long id) {
-        // Fetch the user details from the database
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        // Return the user details
-        return ResponseEntity.ok(user);
+    @GetMapping("/user/{username}")
+    public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
-
 }
