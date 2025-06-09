@@ -25,5 +25,5 @@ public class RoomReview {
 
     private String description;
 
-    private double rating;
+    private Double rating;
 }

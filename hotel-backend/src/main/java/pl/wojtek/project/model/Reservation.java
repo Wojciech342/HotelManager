@@ -15,6 +15,8 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+// base class contains common fields for all children
+// each class in inheritance gets its own table
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Reservation {
     @Id
@@ -25,7 +27,7 @@ public abstract class Reservation {
     private LocalDate startDate;
     private LocalDate endDate;
 
-    private double price;
+    private Double price;
 
     @Enumerated(EnumType.STRING)
     private ReservationStatus status;
