@@ -16,7 +16,7 @@ public class RoomReservation extends Reservation {
     @JsonIgnoreProperties(value = {"roomReservations", "reviews"})
     private Room room;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private RoomReview review;
 
     private String imageUrl;

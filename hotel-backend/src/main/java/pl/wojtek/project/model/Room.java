@@ -21,19 +21,19 @@ public class Room {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int number;
-    private int capacity;
+    private Integer number;
+    private Integer capacity;
     private String status;
-    private double averageRating;
-    private double pricePerNight;
+    private Double averageRating;
+    private Double pricePerNight;
     private String imageUrl;
 
     @Enumerated(EnumType.STRING)
     private RoomType type;
 
-    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "room", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<RoomReview> reviews = new ArrayList<>();
-    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "room", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JsonIgnoreProperties("room")
     private List<RoomReservation> reservations = new ArrayList<>();
 
