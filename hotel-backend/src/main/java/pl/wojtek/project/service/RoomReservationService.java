@@ -2,7 +2,6 @@ package pl.wojtek.project.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import pl.wojtek.project.exception.ResourceNotFoundException;
 import pl.wojtek.project.model.Room;
 import pl.wojtek.project.model.RoomReservation;
@@ -29,37 +28,14 @@ public class RoomReservationService {
         this.userRepository = userRepository;
     }
 
-    @Transactional
     public RoomReservation createRoomReservation(String username, Long roomId, RoomReservation roomReservation) {
-        // Fetch the user and room from the database
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new ResourceNotFoundException("Room", "id", roomId));
 
-        // Validate reservation dates
-        if (roomReservation.getStartDate().isAfter(roomReservation.getEndDate())) {
-            throw new IllegalArgumentException("Start date must be before end date");
-        }
-
-        //Check room availability
-//        boolean isAvailable = room.getRoomReservations().stream()
-//                .noneMatch(reservation ->
-//                        reservation.getStartDate().isBefore(roomReservation.getEndDate()) &&
-//                                reservation.getEndDate().isAfter(roomReservation.getStartDate()));
-//        if (!isAvailable) {
-//            throw new IllegalArgumentException("Room is not available for the selected dates");
-//        }
-
-        // Set the user and room for the reservation
         roomReservation.setUser(user);
         roomReservation.setRoom(room);
-
-        // Add the reservation to the user's and room's reservation lists
-        user.getReservations().add(roomReservation);
-        room.getReservations().add(roomReservation);
-
-        // Save the reservation
         roomReservation.setImageUrl(room.getImageUrl());
         return roomReservationRepository.save(roomReservation);
     }
@@ -74,13 +50,10 @@ public class RoomReservationService {
         return roomReservation;
     }
 
-    @Transactional
     public RoomReservation updateRoomReservation(Long id, RoomReservation roomReservation) {
-        // Fetch the existing reservation
         RoomReservation roomReservationFromDB = roomReservationRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("RoomReservation", "id", id));
 
-        // Update fields
         if (roomReservation.getStartDate() != null) {
             roomReservationFromDB.setStartDate(roomReservation.getStartDate());
         }
@@ -98,15 +71,9 @@ public class RoomReservationService {
         return updatedRoomReservation;
     }
 
-    @Transactional
     public void deleteRoomReservationById(Long id) {
         roomReservationRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("RoomReservation", "id", id));
-
-        // orphanRemoval = true:
-        // This ensures that removing a RoomReservation from the roomReservations list
-        // in the Room entity automatically deletes it from the database.
-
 
         roomReservationRepository.deleteById(id);
     }
