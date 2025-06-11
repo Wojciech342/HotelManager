@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { RoomService } from '../../service/room.service';
+import { RoomService, RoomResponse } from '../../service/room.service';
 import { Room } from '../../model/room';
 import { RoomReview } from '../../model/roomReview';
+import { PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-rooms',
@@ -11,6 +12,11 @@ import { RoomReview } from '../../model/roomReview';
 })
 export class RoomsComponent implements OnInit {
   rooms: Room[] = [];
+  totalElements = 0;
+  totalPages = 0;
+  page = 0;
+  size = 1;
+  lastPage = false;
   filterForm: FormGroup;
   roomTypes: string[] = ['SINGLE', 'DOUBLE', 'FAMILY', 'SUITE', 'DELUXE'];
   selectedTypes: string[] = [];
@@ -24,6 +30,21 @@ export class RoomsComponent implements OnInit {
     step: 10,
     translate: (value: number): string => `${value}`,
   };
+
+  sortBy: string = 'number';
+  sortOrder: string = 'asc';
+
+  sortOptions = [
+    { value: 'number', label: 'Room Number' },
+    { value: 'pricePerNight', label: 'Price' },
+    { value: 'averageRating', label: 'Rating' },
+    { value: 'capacity', label: 'Capacity' },
+  ];
+
+  orderOptions = [
+    { value: 'asc', label: 'Ascending' },
+    { value: 'desc', label: 'Descending' },
+  ];
 
   showReviewsModal = false;
   selectedRoomReviews: RoomReview[] = [];
@@ -44,17 +65,33 @@ export class RoomsComponent implements OnInit {
     });
   }
 
-  getRooms(filters: any = {}): void {
+  getRooms(filters: any = {}) {
     if (this.selectedTypes.length > 0) {
       filters.type = this.selectedTypes;
+    } else {
+      filters.type = [];
     }
-    this.roomService.getFilteredRooms(filters).subscribe({
-      next: (rooms) => (this.rooms = rooms),
-      error: (err) => console.error('Error fetching rooms:', err),
-    });
+    this.roomService
+      .getFilteredRooms(
+        filters,
+        this.page,
+        this.size,
+        this.sortBy,
+        this.sortOrder
+      )
+      .subscribe({
+        next: (res) => {
+          this.rooms = res.content;
+          this.totalElements = res.totalElements;
+          this.totalPages = res.totalPages;
+          this.lastPage = res.lastPage;
+        },
+        error: (err) => console.error('Error fetching rooms:', err),
+      });
   }
 
   onFilter(): void {
+    this.page = 0;
     const filters = this.filterForm.value;
     this.getRooms(filters);
   }
@@ -62,6 +99,7 @@ export class RoomsComponent implements OnInit {
   clearFilters(): void {
     this.filterForm.reset();
     this.selectedTypes = [];
+    this.page = 0;
     this.getRooms();
   }
 
@@ -74,6 +112,11 @@ export class RoomsComponent implements OnInit {
         (type) => type !== checkbox.value
       );
     }
+  }
+
+  onSortChange() {
+    this.page = 0;
+    this.getRooms(this.filterForm.value);
   }
 
   roundToOneDecimal(value: number | null | undefined): string {
@@ -89,5 +132,12 @@ export class RoomsComponent implements OnInit {
   closeReviewsModal() {
     this.showReviewsModal = false;
     this.selectedRoomReviews = [];
+  }
+
+  onMatPageChange(event: PageEvent) {
+    this.page = event.pageIndex;
+    this.size = event.pageSize;
+    this.getRooms(this.filterForm.value);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }

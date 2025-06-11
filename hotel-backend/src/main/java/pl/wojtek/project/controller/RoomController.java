@@ -2,11 +2,13 @@ package pl.wojtek.project.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pl.wojtek.project.model.Room;
+import pl.wojtek.project.payload.RoomResponse;
 import pl.wojtek.project.service.RoomService;
 
 import java.io.IOException;
@@ -24,13 +26,17 @@ public class RoomController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Room>> getFilteredRooms(
+    public ResponseEntity<RoomResponse> getFilteredRooms(
             @RequestParam(value = "type", required = false) List<String> types,
             @RequestParam(value = "minRating", required = false) Double minRating,
             @RequestParam(value = "minPrice", required = false) Double minPrice,
-            @RequestParam(value = "maxPrice", required = false) Double maxPrice) {
-        List<Room> rooms = roomService.getFilteredRooms(types, minRating, minPrice, maxPrice);
-        return new ResponseEntity<>(rooms, HttpStatus.OK);
+            @RequestParam(value = "maxPrice", required = false) Double maxPrice,
+            @RequestParam(value = "page", defaultValue = "0") Integer pageNumber,
+            @RequestParam(value = "size", defaultValue = "10") Integer pageSize,
+            @RequestParam(name = "sortBy", defaultValue = "number", required = false)  String sortBy,
+            @RequestParam(name = "sortOrder", defaultValue = "asc", required = false) String sortOrder) {
+        RoomResponse roomResponse = roomService.getFilteredRooms(types, minRating, minPrice, maxPrice, pageNumber, pageSize, sortBy, sortOrder);
+        return new ResponseEntity<>(roomResponse, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

@@ -28,6 +28,7 @@ import { MyReservationsComponent } from './component/my-reservations/my-reservat
 import { FooterComponent } from './component/footer/footer.component';
 import { StarRatingComponent } from './component/star-rating/star-rating.component';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 @NgModule({
   declarations: [
@@ -54,6 +55,7 @@ import { NgxSliderModule } from '@angular-slider/ngx-slider';
     MatNativeDateModule,
     MatInputModule,
     NgxSliderModule,
+    MatPaginatorModule,
   ],
   providers: [
     provideClientHydration(),

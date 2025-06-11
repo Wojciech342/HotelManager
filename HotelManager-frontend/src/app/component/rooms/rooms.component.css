@@ -139,3 +139,9 @@ input[type="range"]::-ms-fill-upper {
 .btn-close:hover {
   opacity: 1;
 }
+
+.mat-mdc-paginator {
+  justify-content: center !important;
+  display: flex !important;
+  background-color: transparent !important;
+}

@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import pl.wojtek.project.exception.ResourceNotFoundException;
 import pl.wojtek.project.model.Room;
 import pl.wojtek.project.model.RoomSpecifications;
+import pl.wojtek.project.payload.RoomResponse;
 import pl.wojtek.project.repository.RoomRepository;
 
 import java.io.IOException;
@@ -14,6 +15,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 @Service
 public class RoomService {
@@ -52,7 +58,14 @@ public class RoomService {
         roomRepository.deleteAll();
     }
 
-    public List<Room> getFilteredRooms(List<String> types, Double minRating, Double minPrice, Double maxPrice) {
+    public RoomResponse getFilteredRooms(List<String> types, Double minRating, Double minPrice,
+                                         Double maxPrice, Integer pageNumber, Integer pageSize,
+                                         String sortBy, String sortOrder) {
+        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
         Specification<Room> spec = Specification.where(null);
 
         if (types != null && !types.isEmpty()) {
@@ -67,7 +80,16 @@ public class RoomService {
         if (minPrice != null) {
             spec = spec.and(RoomSpecifications.hasPriceGreaterThan(minPrice));
         }
-        return roomRepository.findAll(spec);
+
+        Page<Room> pageRooms = roomRepository.findAll(spec, pageDetails);
+        RoomResponse roomResponse = new RoomResponse();
+        roomResponse.setContent(pageRooms.getContent());
+        roomResponse.setPageNumber(pageRooms.getNumber());
+        roomResponse.setPageSize(pageRooms.getSize());
+        roomResponse.setTotalElements(pageRooms.getTotalElements());
+        roomResponse.setTotalPages(pageRooms.getTotalPages());
+        roomResponse.setLastPage(pageRooms.isLast());
+        return roomResponse;
     }
 
     public Room updateRoomImage(Long roomId, MultipartFile image) throws IOException {
