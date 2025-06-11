@@ -14,3 +14,9 @@ body {
 #main-content {
   flex: 1 0 auto;
 }
+
+ngx-slider {
+  .ngx-slider-pointer {
+    transform: scale(0.8) !important;
+  }
+}
