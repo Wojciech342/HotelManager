@@ -26,8 +26,8 @@ export class RoomService {
 
   getFilteredRooms(
     filters: any = {},
-    page: number = 0,
-    size: number = 10,
+    pageNumber: number = 0,
+    pageSize: number = 10,
     sortBy: string = 'number',
     sortOrder: string = 'asc'
   ): Observable<RoomResponse> {
@@ -45,8 +45,8 @@ export class RoomService {
     if (filters.minRating != null)
       params = params.set('minRating', filters.minRating);
 
-    params = params.set('page', page);
-    params = params.set('size', size);
+    params = params.set('pageNumber', pageNumber);
+    params = params.set('pageSize', pageSize);
     params = params.set('sortBy', sortBy);
     params = params.set('sortOrder', sortOrder);
 

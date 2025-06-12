@@ -14,8 +14,8 @@ export class RoomsComponent implements OnInit {
   rooms: Room[] = [];
   totalElements = 0;
   totalPages = 0;
-  page = 0;
-  size = 1;
+  pageNumber = 0;
+  pageSize = 5;
   lastPage = false;
   filterForm: FormGroup;
   roomTypes: string[] = ['SINGLE', 'DOUBLE', 'FAMILY', 'SUITE', 'DELUXE'];
@@ -74,8 +74,8 @@ export class RoomsComponent implements OnInit {
     this.roomService
       .getFilteredRooms(
         filters,
-        this.page,
-        this.size,
+        this.pageNumber,
+        this.pageSize,
         this.sortBy,
         this.sortOrder
       )
@@ -91,7 +91,7 @@ export class RoomsComponent implements OnInit {
   }
 
   onFilter(): void {
-    this.page = 0;
+    this.pageNumber = 0;
     const filters = this.filterForm.value;
     this.getRooms(filters);
   }
@@ -99,7 +99,7 @@ export class RoomsComponent implements OnInit {
   clearFilters(): void {
     this.filterForm.reset();
     this.selectedTypes = [];
-    this.page = 0;
+    this.pageNumber = 0;
     this.getRooms();
   }
 
@@ -115,7 +115,7 @@ export class RoomsComponent implements OnInit {
   }
 
   onSortChange() {
-    this.page = 0;
+    this.pageNumber = 0;
     this.getRooms(this.filterForm.value);
   }
 
@@ -135,8 +135,8 @@ export class RoomsComponent implements OnInit {
   }
 
   onMatPageChange(event: PageEvent) {
-    this.page = event.pageIndex;
-    this.size = event.pageSize;
+    this.pageNumber = event.pageIndex;
+    this.pageSize = event.pageSize;
     this.getRooms(this.filterForm.value);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }

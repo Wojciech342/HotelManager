@@ -31,8 +31,8 @@ public class RoomController {
             @RequestParam(value = "minRating", required = false) Double minRating,
             @RequestParam(value = "minPrice", required = false) Double minPrice,
             @RequestParam(value = "maxPrice", required = false) Double maxPrice,
-            @RequestParam(value = "page", defaultValue = "0") Integer pageNumber,
-            @RequestParam(value = "size", defaultValue = "10") Integer pageSize,
+            @RequestParam(value = "pageNumber", defaultValue = "0") Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
             @RequestParam(name = "sortBy", defaultValue = "number", required = false)  String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = "asc", required = false) String sortOrder) {
         RoomResponse roomResponse = roomService.getFilteredRooms(types, minRating, minPrice, maxPrice, pageNumber, pageSize, sortBy, sortOrder);

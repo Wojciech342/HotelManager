@@ -233,8 +233,8 @@
 <mat-paginator
   class="mt-2"
   [length]="totalElements"
-  [pageSize]="size"
-  [pageIndex]="page"
+  [pageSize]="pageSize"
+  [pageIndex]="pageNumber"
   [pageSizeOptions]="[1, 2, 5, 10]"
   showFirstLastButtons
   (page)="onMatPageChange($event)"
