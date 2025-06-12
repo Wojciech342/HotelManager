@@ -1,8 +1,17 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { RoomReservation } from '../model/roomReservation';
 import { RoomReview } from '../model/roomReview';
+
+export interface RoomReservationResponse {
+  content: RoomReservation[];
+  pageNumber: number;
+  pageSize: number;
+  totalElements: number;
+  totalPages: number;
+  lastPage: boolean;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -27,8 +36,22 @@ export class RoomReservationService {
     return this.http.get<RoomReservation[]>(`${this.apiUrl}/rooms/${roomId}`);
   }
 
-  getReservationsByUsername(username: string): Observable<RoomReservation[]> {
-    return this.http.get<RoomReservation[]>(`${this.apiUrl}/users/${username}`);
+  getReservationsByUsername(
+    username: string,
+    pageNumber: number = 0,
+    pageSize: number = 10,
+    sortBy: string = 'number',
+    sortOrder: string = 'asc'
+  ): Observable<RoomReservationResponse> {
+    let params = new HttpParams()
+      .set('pageNumber', pageNumber)
+      .set('pageSize', pageSize)
+      .set('sortBy', sortBy)
+      .set('sortOrder', sortOrder);
+    return this.http.get<RoomReservationResponse>(
+      `${this.apiUrl}/users/${username}`,
+      { params }
+    );
   }
 
   updateReservation(
@@ -46,5 +69,20 @@ export class RoomReservationService {
       `http://localhost:8080/api/room-reviews?roomReservationId=${roomReservationId}`,
       review
     );
+  }
+
+  getRoomReservations(
+    pageNumber: number = 0,
+    pageSize: number = 10,
+    sortBy: string = 'number',
+    sortOrder: string = 'asc'
+  ): Observable<RoomReservationResponse> {
+    let params = new HttpParams()
+      .set('pageNumber', pageNumber)
+      .set('pageSize', pageSize)
+      .set('sortBy', sortBy)
+      .set('sortOrder', sortOrder);
+
+    return this.http.get<RoomReservationResponse>(this.apiUrl, { params });
   }
 }

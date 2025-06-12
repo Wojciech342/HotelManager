@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms'; // <-- impo
 import { RoomReservation } from '../../model/roomReservation';
 import { RoomReservationService } from '../../service/room-reservation.service';
 import { RoomReview } from '../../model/roomReview';
+import { PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-my-reservations',
@@ -11,6 +12,26 @@ import { RoomReview } from '../../model/roomReview';
 })
 export class MyReservationsComponent implements OnInit {
   reservations: RoomReservation[] = [];
+  totalElements = 0;
+  totalPages = 0;
+  pageNumber = 0;
+  pageSize = 10;
+  lastPage = false;
+
+  sortBy: string = 'startDate';
+  sortOrder: string = 'asc';
+
+  sortOptions = [
+    { value: 'startDate', label: 'Start Date' },
+    { value: 'reservationDate', label: 'Reservation Date' },
+    { value: 'status', label: 'Status' },
+  ];
+
+  orderOptions = [
+    { value: 'asc', label: 'Ascending' },
+    { value: 'desc', label: 'Descending' },
+  ];
+
   username: string | null = null;
 
   // Modal state
@@ -43,9 +64,20 @@ export class MyReservationsComponent implements OnInit {
 
   loadReservations() {
     this.reservationService
-      .getReservationsByUsername(this.username!)
+      .getReservationsByUsername(
+        this.username!,
+        this.pageNumber,
+        this.pageSize,
+        this.sortBy,
+        this.sortOrder
+      )
       .subscribe({
-        next: (res) => (this.reservations = res),
+        next: (res) => {
+          this.reservations = res.content;
+          this.totalElements = res.totalElements;
+          this.totalPages = res.totalPages;
+          this.lastPage = res.lastPage;
+        },
         error: (err) => console.error('Failed to load reservations', err),
       });
   }
@@ -116,5 +148,17 @@ export class MyReservationsComponent implements OnInit {
             ),
         });
     }
+  }
+
+  onMatPageChange(event: PageEvent) {
+    this.pageNumber = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.loadReservations();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  onSortChange() {
+    this.pageNumber = 0;
+    this.loadReservations();
   }
 }

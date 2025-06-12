@@ -1,8 +1,35 @@
 <!-- my-reservations.component.html (updated) -->
 <div class="container py-4">
-  <h2 class="fw-bold mb-4 text-primary">
-    <i class="bi bi-calendar-check me-2"></i>My Reservations
-  </h2>
+  <div
+    class="d-flex flex-wrap align-items-center justify-content-between mb-3 gap-2"
+  >
+    <h2 class="fw-bold mb-0 text-primary d-flex align-items-center">
+      <i class="bi bi-calendar-check me-2"></i>My Reservations
+    </h2>
+    <div class="d-flex align-items-center gap-2">
+      <label class="fw-semibold text-secondary mb-0 me-2">Sort by:</label>
+      <select
+        class="form-select w-auto"
+        [(ngModel)]="sortBy"
+        (change)="onSortChange()"
+        style="min-width: 140px"
+      >
+        <option *ngFor="let opt of sortOptions" [value]="opt.value">
+          {{ opt.label }}
+        </option>
+      </select>
+      <select
+        class="form-select w-auto"
+        [(ngModel)]="sortOrder"
+        (change)="onSortChange()"
+        style="min-width: 120px"
+      >
+        <option *ngFor="let opt of orderOptions" [value]="opt.value">
+          {{ opt.label }}
+        </option>
+      </select>
+    </div>
+  </div>
 
   <div
     *ngIf="reservations.length === 0"
@@ -159,3 +186,14 @@
     </div>
   </form>
 </div>
+
+<mat-paginator
+  class="mt-2"
+  [length]="totalElements"
+  [pageSize]="pageSize"
+  [pageIndex]="pageNumber"
+  [pageSizeOptions]="[1, 2, 5, 10]"
+  showFirstLastButtons
+  (page)="onMatPageChange($event)"
+>
+</mat-paginator>

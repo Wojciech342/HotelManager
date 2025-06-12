@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.wojtek.project.model.RoomReservation;
+import pl.wojtek.project.payload.RoomReservationResponse;
 import pl.wojtek.project.service.RoomReservationService;
 
 import java.util.List;
@@ -22,8 +23,12 @@ public class RoomReservationController {
     }
 
     @GetMapping
-    public ResponseEntity<List<RoomReservation>> getAllRoomReservations() {
-        List<RoomReservation> reservations = roomReservationService.getAllRoomReservations();
+    public ResponseEntity<RoomReservationResponse> getRoomReservations(
+            @RequestParam(value = "pageNumber", defaultValue = "0") Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
+            @RequestParam(name = "sortBy", defaultValue = "startDate", required = false)  String sortBy,
+            @RequestParam(name = "sortOrder", defaultValue = "asc", required = false) String sortOrder) {
+        RoomReservationResponse reservations = roomReservationService.getRoomReservations(pageNumber, pageSize, sortBy, sortOrder);
         return new ResponseEntity<>(reservations, HttpStatus.OK);
     }
 
@@ -40,8 +45,14 @@ public class RoomReservationController {
     }
 
     @GetMapping("/users/{username}")
-    public ResponseEntity<List<RoomReservation>> getReservationsByUsername(@PathVariable String username) {
-        List<RoomReservation> reservations = roomReservationService.getRoomReservationsByUsername(username);
+    public ResponseEntity<RoomReservationResponse> getReservationsByUsernamePaged(
+            @PathVariable String username,
+            @RequestParam(value = "pageNumber", defaultValue = "0") Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
+            @RequestParam(name = "sortBy", defaultValue = "number", required = false) String sortBy,
+            @RequestParam(name = "sortOrder", defaultValue = "asc", required = false) String sortOrder) {
+        RoomReservationResponse reservations = roomReservationService.getRoomReservationsByUsername(
+                username, pageNumber, pageSize, sortBy, sortOrder);
         return new ResponseEntity<>(reservations, HttpStatus.OK);
     }
 

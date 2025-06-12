@@ -1,11 +1,17 @@
 package pl.wojtek.project.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import pl.wojtek.project.exception.ResourceNotFoundException;
 import pl.wojtek.project.model.Room;
 import pl.wojtek.project.model.RoomReservation;
 import pl.wojtek.project.model.User;
+import pl.wojtek.project.payload.RoomReservationResponse;
+import pl.wojtek.project.payload.RoomResponse;
 import pl.wojtek.project.repository.RoomRepository;
 import pl.wojtek.project.repository.RoomReservationRepository;
 import pl.wojtek.project.repository.UserRepository;
@@ -40,8 +46,23 @@ public class RoomReservationService {
         return roomReservationRepository.save(roomReservation);
     }
 
-    public List<RoomReservation> getAllRoomReservations() {
-        return roomReservationRepository.findAll();
+    public RoomReservationResponse getRoomReservations(Integer pageNumber, Integer pageSize,
+                                                       String sortBy, String sortOrder) {
+        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
+
+        Page<RoomReservation> pageRoomReservations = roomReservationRepository.findAll(pageDetails);
+        RoomReservationResponse roomReservationResponse = new RoomReservationResponse();
+        roomReservationResponse.setContent(pageRoomReservations.getContent());
+        roomReservationResponse.setPageNumber(pageRoomReservations.getNumber());
+        roomReservationResponse.setPageSize(pageRoomReservations.getSize());
+        roomReservationResponse.setTotalElements(pageRoomReservations.getTotalElements());
+        roomReservationResponse.setTotalPages(pageRoomReservations.getTotalPages());
+        roomReservationResponse.setLastPage(pageRoomReservations.isLast());
+        return roomReservationResponse;
     }
 
     public RoomReservation getRoomReservationById(Long id) {
@@ -63,7 +84,7 @@ public class RoomReservationService {
         if (roomReservation.getPrice() != 0) {
             roomReservationFromDB.setPrice(roomReservation.getPrice());
         }
-        if(roomReservation.getStatus() != null) {
+        if (roomReservation.getStatus() != null) {
             roomReservationFromDB.setStatus(roomReservation.getStatus());
         }
 
@@ -85,13 +106,26 @@ public class RoomReservationService {
         return roomReservations;
     }
 
-    public List<RoomReservation> getRoomReservationsByUsername(String username) {
+    public RoomReservationResponse getRoomReservationsByUsername(
+            String username, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
 
-        List<RoomReservation> roomReservations = roomReservationRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("RoomReservation", "userId", user.getId()));
+        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
 
-        return roomReservations;
+        Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
+
+        Page<RoomReservation> pageRoomReservations = roomReservationRepository.findByUserId(user.getId(), pageDetails);
+
+        RoomReservationResponse response = new RoomReservationResponse();
+        response.setContent(pageRoomReservations.getContent());
+        response.setPageNumber(pageRoomReservations.getNumber());
+        response.setPageSize(pageRoomReservations.getSize());
+        response.setTotalElements(pageRoomReservations.getTotalElements());
+        response.setTotalPages(pageRoomReservations.getTotalPages());
+        response.setLastPage(pageRoomReservations.isLast());
+        return response;
     }
 }

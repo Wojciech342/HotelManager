@@ -1,12 +1,15 @@
 package pl.wojtek.project.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import pl.wojtek.project.model.RoomReservation;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface RoomReservationRepository extends JpaRepository<RoomReservation, Long> {
+public interface RoomReservationRepository extends JpaRepository<RoomReservation, Long>, PagingAndSortingRepository<RoomReservation, Long> {
     Optional<List<RoomReservation>> findByRoomId(Long roomId);
-    Optional<List<RoomReservation>> findByUserId(Long userId);
+    Page<RoomReservation> findByUserId(Long userId, Pageable pageable);
 }
