@@ -2,6 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../auth/auth.service';
 import { SignupInfo } from '../../auth/signup-info';
+import { AbstractControl, ValidationErrors } from '@angular/forms';
 
 @Component({
   selector: 'app-register',
@@ -20,9 +21,26 @@ export class RegisterComponent implements OnInit {
 
   ngOnInit() {
     this.registerForm = this.fb.group({
-      username: ['', Validators.required],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      username: ['', [this.usernameValidator]],
+      password: ['', [this.passwordValidator]],
     });
+  }
+
+  usernameValidator(control: AbstractControl): ValidationErrors | null {
+    const value = control.value || '';
+    if (!value) return { required: true };
+    if (!value.trim()) return { whitespace: true };
+    if (value.length < 3 || value.length > 20) return { length: true };
+    if (!/^[a-zA-Z0-9]+$/.test(value)) return { invalidChars: true };
+    return null;
+  }
+
+  passwordValidator(control: AbstractControl): ValidationErrors | null {
+    const value = control.value || '';
+    if (!value) return { required: true };
+    if (!value.trim()) return { whitespace: true };
+    if (value.length < 6) return { length: true };
+    return null;
   }
 
   onSubmit() {

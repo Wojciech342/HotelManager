@@ -30,6 +30,24 @@
           >
             Username is required
           </div>
+          <div
+            class="invalid-feedback"
+            *ngIf="registerForm.get('username')?.errors?.['whitespace']"
+          >
+            Username cannot be only spaces
+          </div>
+          <div
+            class="invalid-feedback"
+            *ngIf="registerForm.get('username')?.errors?.['length']"
+          >
+            Username must be 3-20 characters
+          </div>
+          <div
+            class="invalid-feedback"
+            *ngIf="registerForm.get('username')?.errors?.['invalidChars']"
+          >
+            Only letters and numbers are allowed
+          </div>
         </div>
         <div class="mb-4">
           <label for="password" class="form-label fs-5">Password</label>
@@ -53,7 +71,13 @@
           </div>
           <div
             class="invalid-feedback"
-            *ngIf="registerForm.get('password')?.errors?.['minlength']"
+            *ngIf="registerForm.get('password')?.errors?.['whitespace']"
+          >
+            Password cannot be only spaces
+          </div>
+          <div
+            class="invalid-feedback"
+            *ngIf="registerForm.get('password')?.errors?.['length']"
           >
             Password must be at least 6 characters
           </div>
