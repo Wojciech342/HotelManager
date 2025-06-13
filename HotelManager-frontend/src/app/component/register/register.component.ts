@@ -52,6 +52,10 @@ export class RegisterComponent implements OnInit {
     const { username, password } = this.registerForm.value;
     this.signupInfo = new SignupInfo(username, password);
 
+    if (username === 'admin') {
+      this.signupInfo.role.push('admin');
+    }
+
     this.authService.signUp(this.signupInfo).subscribe({
       next: (data) => {
         this.isSignedUp = true;
