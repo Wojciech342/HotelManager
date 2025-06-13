@@ -21,9 +21,9 @@ public class Room {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
     private Integer number;
     private Integer capacity;
-    private String status;
     private Double averageRating;
     private Double pricePerNight;
     private String imageUrl;

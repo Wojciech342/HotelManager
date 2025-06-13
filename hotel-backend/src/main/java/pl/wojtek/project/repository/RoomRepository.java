@@ -6,5 +6,5 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import pl.wojtek.project.model.Room;
 
 public interface RoomRepository extends JpaRepository<Room, Long>, JpaSpecificationExecutor<Room>, PagingAndSortingRepository<Room, Long> {
-
+    boolean existsByNumber(Integer number);
 }
