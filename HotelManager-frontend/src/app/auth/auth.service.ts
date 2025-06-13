@@ -38,4 +38,15 @@ export class AuthService {
   logout(): void {
     this.tokenStorage.signOut();
   }
+
+  isAdmin(): boolean {
+    const authorities = localStorage.getItem('AuthAuthorities');
+    if (!authorities) return false;
+    try {
+      const roles = JSON.parse(authorities);
+      return roles.some((role: any) => role.authority === 'ROLE_ADMIN');
+    } catch {
+      return false;
+    }
+  }
 }
