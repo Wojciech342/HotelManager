@@ -5,6 +5,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import pl.wojtek.project.exception.ResourceNotFoundException;
+import pl.wojtek.project.exception.RoomNumberAlreadyTakenException;
 import pl.wojtek.project.model.Room;
 import pl.wojtek.project.model.RoomSpecifications;
 import pl.wojtek.project.payload.RoomResponse;
@@ -42,9 +43,19 @@ public class RoomService {
         return room;
     }
 
-    public Room createRoom(Room room) {
-        Room createdRoom = roomRepository.save(room);
-        return createdRoom;
+    public Room createRoomWithImage(Room room, MultipartFile image) throws IOException {
+        if(roomRepository.existsByNumber(room.getNumber())) {
+            throw new RoomNumberAlreadyTakenException(room.getNumber());
+        }
+        if (image != null && !image.isEmpty()) {
+            String fileName = "room_" + room.getNumber() + "_" + System.currentTimeMillis() + "_" + image.getOriginalFilename();
+            Path imagePath = Paths.get("uploads/rooms/" + fileName);
+            Files.createDirectories(imagePath.getParent());
+            Files.write(imagePath, image.getBytes());
+            room.setImageUrl("http://localhost:8080/uploads/rooms/" + fileName);
+        }
+        room.setAverageRating(0.0);
+        return roomRepository.save(room);
     }
 
     public void deleteRoom(Long id) {

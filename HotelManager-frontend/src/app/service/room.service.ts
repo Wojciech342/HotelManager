@@ -56,4 +56,8 @@ export class RoomService {
   getRoomById(id: number): Observable<Room> {
     return this.http.get<Room>(`${this.baseUrl}/${id}`);
   }
+
+  addRoom(formData: FormData): Observable<Room> {
+    return this.http.post<Room>(this.baseUrl, formData);
+  }
 }

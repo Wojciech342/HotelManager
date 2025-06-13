@@ -1,10 +1,12 @@
 package pl.wojtek.project.controller;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pl.wojtek.project.model.Room;
@@ -45,13 +47,28 @@ public class RoomController {
         return new ResponseEntity<>(room, HttpStatus.OK);
     }
 
-    @PostMapping
-    public ResponseEntity<Room> createRoom(@RequestBody Room room) {
-        Room createdRoom = roomService.createRoom(room);
+    @PostMapping(consumes = "multipart/form-data")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Room> createRoom(
+            @RequestPart("room") String roomJson,
+            @RequestPart(value = "image", required = false) MultipartFile image
+    ) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Room room;
+        System.out.println(roomJson);
+        try {
+            room = objectMapper.readValue(roomJson, Room.class);
+            System.out.println(room.toString());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+        Room createdRoom = roomService.createRoomWithImage(room, image);
         return new ResponseEntity<>(createdRoom, HttpStatus.CREATED);
     }
 
     @PutMapping("/{roomId}/image")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Room> updateRoomImage(
             @PathVariable Long roomId,
             @RequestParam("image") MultipartFile image) throws IOException {
@@ -60,6 +77,7 @@ public class RoomController {
     }
 
     @PutMapping("/image")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<Room>> updateAllRoomsImage(
             @RequestParam("image") MultipartFile image) throws IOException {
         List<Room> updatedRooms = roomService.updateAllRoomsImage(image);
@@ -67,12 +85,14 @@ public class RoomController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Room> deleteRoom(@PathVariable Long id) {
         roomService.deleteRoom(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Room> deleteAllRooms() {
         roomService.deleteAllRooms();
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

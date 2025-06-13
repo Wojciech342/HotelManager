@@ -4,6 +4,10 @@ import { RoomService, RoomResponse } from '../../service/room.service';
 import { Room } from '../../model/room';
 import { RoomReview } from '../../model/roomReview';
 import { PageEvent } from '@angular/material/paginator';
+import { MatDialog } from '@angular/material/dialog';
+import { AddRoomDialogComponent } from '../add-room-dialog/add-room-dialog.component';
+import { ROOM_TYPES } from '../../constants/room-types';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-rooms',
@@ -18,7 +22,7 @@ export class RoomsComponent implements OnInit {
   pageSize = 5;
   lastPage = false;
   filterForm: FormGroup;
-  roomTypes: string[] = ['SINGLE', 'DOUBLE', 'FAMILY', 'SUITE', 'DELUXE'];
+  roomTypes: string[] = ROOM_TYPES;
   selectedTypes: string[] = [];
   isBrowser = typeof window !== 'undefined';
 
@@ -49,7 +53,12 @@ export class RoomsComponent implements OnInit {
   showReviewsModal = false;
   selectedRoomReviews: RoomReview[] = [];
 
-  constructor(private roomService: RoomService, private fb: FormBuilder) {
+  constructor(
+    private roomService: RoomService,
+    private fb: FormBuilder,
+    private dialog: MatDialog,
+    private authService: AuthService
+  ) {
     this.filterForm = this.fb.group({
       minPrice: [null],
       maxPrice: [null],
@@ -139,5 +148,21 @@ export class RoomsComponent implements OnInit {
     this.pageSize = event.pageSize;
     this.getRooms(this.filterForm.value);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  openAddRoomDialog() {
+    const dialogRef = this.dialog.open(AddRoomDialogComponent, {
+      width: '400px',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.getRooms(); // Refresh the list
+      }
+    });
+  }
+
+  get isAdmin(): boolean {
+    return this.authService.isAdmin();
   }
 }

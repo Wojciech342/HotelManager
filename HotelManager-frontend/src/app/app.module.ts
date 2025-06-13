@@ -29,6 +29,12 @@ import { FooterComponent } from './component/footer/footer.component';
 import { StarRatingComponent } from './component/star-rating/star-rating.component';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { AddRoomDialogComponent } from './component/add-room-dialog/add-room-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
 
 @NgModule({
   declarations: [
@@ -45,6 +51,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     MyReservationsComponent,
     FooterComponent,
     StarRatingComponent,
+    AddRoomDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -56,6 +63,11 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     MatInputModule,
     NgxSliderModule,
     MatPaginatorModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatButtonModule,
+    MatIconModule,
+    MatSelectModule,
   ],
   providers: [
     provideClientHydration(),
