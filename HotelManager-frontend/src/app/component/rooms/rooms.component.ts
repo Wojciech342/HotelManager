@@ -8,6 +8,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { AddRoomDialogComponent } from '../add-room-dialog/add-room-dialog.component';
 import { ROOM_TYPES } from '../../constants/room-types';
 import { AuthService } from '../../auth/auth.service';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { ErrorDialogComponent } from '../error-dialog/error-dialog.component';
+import { ApiError } from '../../service/room.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { SuccessDialogComponent } from '../success-dialog/success-dialog.component';
 
 @Component({
   selector: 'app-rooms',
@@ -57,7 +62,8 @@ export class RoomsComponent implements OnInit {
     private roomService: RoomService,
     private fb: FormBuilder,
     private dialog: MatDialog,
-    private authService: AuthService
+    private authService: AuthService,
+    private snackBar: MatSnackBar
   ) {
     this.filterForm = this.fb.group({
       minPrice: [null],
@@ -97,6 +103,58 @@ export class RoomsComponent implements OnInit {
         },
         error: (err) => console.error('Error fetching rooms:', err),
       });
+  }
+
+  deleteRoom(roomId: number) {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      data: {
+        title: 'Delete Room',
+        message:
+          'Are you sure you want to delete this room? This action cannot be undone.',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (confirmed) {
+        this.roomService.deleteRoom(roomId).subscribe({
+          next: () => {
+            this.getRooms(); // Refresh the list after deletion
+
+            // Open success dialog
+            this.dialog.open(SuccessDialogComponent, {
+              width: 'auto',
+              panelClass: 'success-dialog-panel',
+              position: { top: '100px' }, // Only specify top, making it centered horizontally
+              hasBackdrop: false, // No darkened backdrop
+              data: {
+                message: 'Room deleted successfully',
+              },
+            });
+          },
+          error: (err: ApiError) => {
+            if (err.status === 409) {
+              this.dialog.open(ErrorDialogComponent, {
+                width: '450px',
+                data: {
+                  title: 'Cannot Delete Room',
+                  message:
+                    'This room has active or upcoming reservations and cannot be deleted. Please cancel all reservations first.',
+                },
+              });
+            } else {
+              this.dialog.open(ErrorDialogComponent, {
+                width: '400px',
+                data: {
+                  title: 'Error',
+                  message: 'Failed to delete room. Please try again later.',
+                },
+              });
+            }
+          },
+        });
+      }
+    });
   }
 
   onFilter(): void {
