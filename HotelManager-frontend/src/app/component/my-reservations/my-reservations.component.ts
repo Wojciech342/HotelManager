@@ -84,6 +84,8 @@ export class MyReservationsComponent implements OnInit {
 
   canMakeReview(reservation: RoomReservation): boolean {
     if (reservation.review !== null) return false;
+    if (reservation.status === 'CANCELLED') return false;
+    if (reservation.room === null) return false;
     const today = new Date();
     const start = new Date(reservation.startDate + 'T00:00:00');
     return today >= start && !reservation.review;
