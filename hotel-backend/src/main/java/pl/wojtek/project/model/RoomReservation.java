@@ -12,7 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class RoomReservation extends Reservation {
-    @ManyToOne
+    @ManyToOne(optional = true)
     @JsonIgnoreProperties(value = {"roomReservations", "reviews"})
     private Room room;
 
