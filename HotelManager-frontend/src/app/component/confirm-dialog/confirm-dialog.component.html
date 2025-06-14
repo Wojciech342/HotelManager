@@ -1,17 +1,25 @@
 <h2 mat-dialog-title class="d-flex align-items-center gap-2">
-  <mat-icon color="warn">warning</mat-icon>
+  <mat-icon [color]="getColor()">{{
+    data.type === "success" ? "help" : "warning"
+  }}</mat-icon>
   {{ data.title }}
 </h2>
 <mat-dialog-content>
   <p class="mb-0">{{ data.message }}</p>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-stroked-button color="primary" (click)="onCancel()">
-    <mat-icon>close</mat-icon>
-    Cancel
+  <button mat-stroked-button color="basic" (click)="onCancel()">
+    <mat-icon>{{ data.cancelIcon }}</mat-icon>
+    {{ data.cancelText }}
   </button>
-  <button mat-flat-button color="warn" (click)="onConfirm()" class="ms-2">
-    <mat-icon>delete</mat-icon>
-    Delete
+  <button
+    mat-flat-button
+    [color]="getColor()"
+    (click)="onConfirm()"
+    class="ms-2"
+    [ngClass]="'button-' + data.type"
+  >
+    <mat-icon>{{ data.confirmIcon }}</mat-icon>
+    {{ data.confirmText }}
   </button>
 </mat-dialog-actions>

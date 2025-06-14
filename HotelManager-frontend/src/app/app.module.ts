@@ -40,6 +40,8 @@ import { ErrorDialogComponent } from './component/error-dialog/error-dialog.comp
 import { SuccessDialogComponent } from './component/success-dialog/success-dialog.component';
 import { MyMessagesComponent } from './component/my-messages/my-messages.component';
 import { MessageDetailComponent } from './component/message-detail/message-detail.component';
+import { PendingReservationsComponent } from './component/pending-reservations/pending-reservations.component';
+import { AccessDeniedComponent } from './component/access-denied/access-denied.component';
 
 @NgModule({
   declarations: [
@@ -62,6 +64,8 @@ import { MessageDetailComponent } from './component/message-detail/message-detai
     SuccessDialogComponent,
     MyMessagesComponent,
     MessageDetailComponent,
+    PendingReservationsComponent,
+    AccessDeniedComponent,
   ],
   imports: [
     BrowserModule,

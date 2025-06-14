@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import pl.wojtek.project.exception.ResourceNotFoundException;
+import pl.wojtek.project.model.ReservationStatus;
 import pl.wojtek.project.model.Room;
 import pl.wojtek.project.model.RoomReservation;
 import pl.wojtek.project.model.User;
@@ -40,10 +41,28 @@ public class RoomReservationService {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new ResourceNotFoundException("Room", "id", roomId));
 
+        if (hasOverlappingReservation(room, roomReservation)) {
+            throw new IllegalArgumentException("Reservation dates overlap with an existing reservation");
+        }
+
         roomReservation.setUser(user);
         roomReservation.setRoom(room);
         roomReservation.setImageUrl(room.getImageUrl());
+        roomReservation.setStatus(ReservationStatus.PENDING);
+
         return roomReservationRepository.save(roomReservation);
+    }
+
+    private boolean hasOverlappingReservation(Room room, RoomReservation newReservation) {
+        return roomReservationRepository.findByRoomId(room.getId())
+                .orElse(List.of())
+                .stream()
+                .filter(res -> res.getStatus() != ReservationStatus.CANCELLED &&
+                        res.getStatus() != ReservationStatus.REJECTED)
+                .anyMatch(res ->
+                        newReservation.getStartDate().isBefore(res.getEndDate()) &&
+                                newReservation.getEndDate().isAfter(res.getStartDate())
+                );
     }
 
     public RoomReservationResponse getRoomReservations(Integer pageNumber, Integer pageSize,
@@ -127,5 +146,15 @@ public class RoomReservationService {
         response.setTotalPages(pageRoomReservations.getTotalPages());
         response.setLastPage(pageRoomReservations.isLast());
         return response;
+    }
+
+    public List<RoomReservation> getPendingReservations() {
+        return roomReservationRepository.findByStatus(ReservationStatus.PENDING);
+    }
+
+    public RoomReservation updateReservationStatus(Long id, ReservationStatus status) {
+        RoomReservation reservation = getRoomReservationById(id);
+        reservation.setStatus(status);
+        return roomReservationRepository.save(reservation);
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import pl.wojtek.project.exception.ResourceNotFoundException;
 import pl.wojtek.project.exception.RoomHasActiveReservationsException;
 import pl.wojtek.project.exception.RoomNumberAlreadyTakenException;
+import pl.wojtek.project.model.ReservationStatus;
 import pl.wojtek.project.model.Room;
 import pl.wojtek.project.model.RoomReservation;
 import pl.wojtek.project.model.RoomSpecifications;
@@ -80,6 +81,9 @@ public class RoomService {
         for (RoomReservation reservation : pastReservations) {
             reservation.setImageUrl(room.getImageUrl()); // Keep the image URL for reference
             reservation.setRoom(null); // Disconnect from the room
+            if(reservation.getStatus() == ReservationStatus.PENDING) {
+                reservation.setStatus(ReservationStatus.REJECTED);
+            }
         }
 
         // Save all updated reservations

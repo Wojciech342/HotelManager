@@ -85,4 +85,18 @@ export class RoomReservationService {
 
     return this.http.get<RoomReservationResponse>(this.apiUrl, { params });
   }
+
+  getPendingReservations(): Observable<RoomReservation[]> {
+    return this.http.get<RoomReservation[]>(`${this.apiUrl}/pending`);
+  }
+
+  updateReservationStatus(
+    id: number,
+    status: string
+  ): Observable<RoomReservation> {
+    return this.http.put<RoomReservation>(
+      `${this.apiUrl}/${id}/status?status=${status}`,
+      {}
+    );
+  }
 }

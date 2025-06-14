@@ -4,7 +4,9 @@ package pl.wojtek.project.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import pl.wojtek.project.model.ReservationStatus;
 import pl.wojtek.project.model.RoomReservation;
 import pl.wojtek.project.payload.RoomReservationResponse;
 import pl.wojtek.project.service.RoomReservationService;
@@ -78,6 +80,22 @@ public class RoomReservationController {
     public ResponseEntity<RoomReservation> deleteRoomReservation(@PathVariable Long id) {
         roomReservationService.deleteRoomReservationById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/pending")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<RoomReservation>> getPendingReservations() {
+        List<RoomReservation> pendingReservations = roomReservationService.getPendingReservations();
+        return new ResponseEntity<>(pendingReservations, HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}/status")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<RoomReservation> updateReservationStatus(
+            @PathVariable Long id,
+            @RequestParam ReservationStatus status) {
+        RoomReservation updatedReservation = roomReservationService.updateReservationStatus(id, status);
+        return new ResponseEntity<>(updatedReservation, HttpStatus.OK);
     }
 
 }

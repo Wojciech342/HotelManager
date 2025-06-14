@@ -11,6 +11,9 @@ import { RegisterComponent } from './component/register/register.component';
 import { MakeReservationComponent } from './component/make-reservation/make-reservation.component';
 import { MyReservationsComponent } from './component/my-reservations/my-reservations.component';
 import { MyMessagesComponent } from './component/my-messages/my-messages.component';
+import { PendingReservationsComponent } from './component/pending-reservations/pending-reservations.component';
+import { AdminGuard } from './guard/admin.guard';
+import { AccessDeniedComponent } from './component/access-denied/access-denied.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -38,6 +41,15 @@ const routes: Routes = [
     path: 'my-messages',
     component: MyMessagesComponent,
     canActivate: [AuthGuard],
+  },
+  {
+    path: 'pending-reservations',
+    component: PendingReservationsComponent,
+    canActivate: [AdminGuard],
+  },
+  {
+    path: 'access-denied',
+    component: AccessDeniedComponent,
   },
   { path: '**', redirectTo: '' },
 ];

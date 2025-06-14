@@ -1,0 +1,95 @@
+<div class="container py-4">
+  <div class="row">
+    <div class="col-12">
+      <h2 class="mb-4">Pending Reservations</h2>
+
+      <div *ngIf="loading" class="d-flex justify-content-center my-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+
+      <div *ngIf="error" class="alert alert-danger">
+        {{ error }}
+        <button class="btn-close float-end" (click)="error = ''"></button>
+      </div>
+
+      <div
+        *ngIf="!loading && pendingReservations.length === 0"
+        class="alert alert-info"
+      >
+        No pending reservations available. All reservations have been processed.
+      </div>
+
+      <div class="row row-cols-1 row-cols-md-2 g-4 mt-2">
+        <div *ngFor="let reservation of pendingReservations" class="col">
+          <div class="card h-100 border-primary">
+            <div
+              class="card-header bg-primary text-white d-flex justify-content-between align-items-center"
+            >
+              <span>Reservation #{{ reservation.id }}</span>
+              <span class="badge bg-warning">PENDING</span>
+            </div>
+            <div class="card-body">
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <img
+                    [src]="
+                      reservation.imageUrl ||
+                      'assets/images/room-placeholder.jpg'
+                    "
+                    class="img-fluid rounded"
+                    alt="Room Image"
+                  />
+                </div>
+                <div class="col-md-8">
+                  <h5 class="card-title">
+                    Room {{ reservation.room?.number }}
+                  </h5>
+                  <h6 class="card-subtitle text-muted mb-2">
+                    {{ reservation.room?.type }}
+                  </h6>
+
+                  <div class="mb-2">
+                    <strong>Dates:</strong>
+                    {{ formatDate(reservation.startDate) }} to
+                    {{ formatDate(reservation.endDate) }}
+                    <div class="small text-muted">
+                      ({{
+                        calculateDuration(
+                          reservation.startDate,
+                          reservation.endDate
+                        )
+                      }}
+                      nights)
+                    </div>
+                  </div>
+
+                  <div><strong>Price:</strong> ${{ reservation.price }}</div>
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-end gap-2">
+                <button
+                  class="btn btn-outline-danger"
+                  (click)="confirmAction(reservation.id!, 'reject')"
+                >
+                  <i class="bi bi-x-circle me-1"></i> Reject
+                </button>
+                <button
+                  class="btn btn-success"
+                  (click)="confirmAction(reservation.id!, 'accept')"
+                >
+                  <i class="bi bi-check-circle me-1"></i> Accept
+                </button>
+              </div>
+            </div>
+            <div class="card-footer text-muted">
+              Reserved on: {{ formatDate(reservation.reservationDate) }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
