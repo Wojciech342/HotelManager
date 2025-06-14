@@ -5,4 +5,5 @@ import { RoomReview } from './roomReview';
 export interface RoomReservation extends Reservation {
   room?: Room;
   review?: RoomReview;
+  imageUrl?: string;
 }
