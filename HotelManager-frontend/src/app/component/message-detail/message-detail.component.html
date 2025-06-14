@@ -1,0 +1,113 @@
+<h2 mat-dialog-title class="border-bottom pb-2">Message Details</h2>
+
+<mat-dialog-content class="pb-0">
+  <div *ngIf="loading" class="d-flex justify-content-center my-4">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+  </div>
+
+  <div *ngIf="message && !loading && !error">
+    <div class="message-thread">
+      <!-- Original message -->
+      <div class="message-container mb-4">
+        <div
+          class="message-header d-flex justify-content-between align-items-start mb-2"
+        >
+          <div>
+            <h5 class="mb-1">{{ thread[0].subject }}</h5>
+            <div class="d-flex text-muted small">
+              <div class="me-3">
+                From: <strong>{{ thread[0].sender.username }}</strong>
+              </div>
+              <div>
+                To: <strong>{{ thread[0].recipient.username }}</strong>
+              </div>
+            </div>
+          </div>
+          <div class="text-muted small">{{ formatDate(thread[0].sentAt) }}</div>
+        </div>
+        <div class="message-body">{{ thread[0].content }}</div>
+      </div>
+
+      <!-- Replies -->
+      <div *ngIf="thread.length > 1" class="replies mt-4">
+        <h5 class="mb-3">Replies</h5>
+
+        <div
+          *ngFor="let reply of thread.slice(1)"
+          class="message-container mb-3 border-start border-4 ps-3"
+          [class.border-primary]="reply.sender.username === currentUsername"
+          [class.border-secondary]="reply.sender.username !== currentUsername"
+        >
+          <div
+            class="message-header d-flex justify-content-between align-items-start mb-2"
+          >
+            <div>
+              <div class="d-flex text-muted small">
+                <div class="me-3">
+                  From: <strong>{{ reply.sender.username }}</strong>
+                </div>
+                <div>
+                  To: <strong>{{ reply.recipient.username }}</strong>
+                </div>
+              </div>
+            </div>
+            <div class="text-muted small">{{ formatDate(reply.sentAt) }}</div>
+          </div>
+          <div class="message-body">{{ reply.content }}</div>
+        </div>
+      </div>
+
+      <!-- Reply form -->
+      <div *ngIf="canReply()" class="reply-form mt-4 pt-3 border-top">
+        <h5 class="mb-2">Reply</h5>
+        <!-- Add this line to show recipient -->
+        <div class="text-muted mb-3">
+          Your reply will be sent to <strong>{{ getReplyRecipient() }}</strong>
+        </div>
+
+        <form [formGroup]="replyForm" (ngSubmit)="sendReply()">
+          <div class="mb-3">
+            <textarea
+              formControlName="replyMessage"
+              class="form-control"
+              rows="4"
+              placeholder="Type your reply here..."
+            ></textarea>
+            <div
+              *ngIf="
+                replyForm.get('replyMessage')?.invalid &&
+                replyForm.get('replyMessage')?.touched
+              "
+              class="text-danger mt-1 small"
+            >
+              Please enter a message of at least 5 characters.
+            </div>
+          </div>
+          <div class="d-flex justify-content-end">
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="replyForm.invalid || replying"
+            >
+              <span
+                *ngIf="replying"
+                class="spinner-border spinner-border-sm me-1"
+              ></span>
+              Send Reply
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Close</button>
+</mat-dialog-actions>

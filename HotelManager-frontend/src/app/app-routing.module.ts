@@ -10,6 +10,7 @@ import { RoomsComponent } from './component/rooms/rooms.component';
 import { RegisterComponent } from './component/register/register.component';
 import { MakeReservationComponent } from './component/make-reservation/make-reservation.component';
 import { MyReservationsComponent } from './component/my-reservations/my-reservations.component';
+import { MyMessagesComponent } from './component/my-messages/my-messages.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -31,6 +32,11 @@ const routes: Routes = [
   {
     path: 'user-info',
     component: UserInfoComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'my-messages',
+    component: MyMessagesComponent,
     canActivate: [AuthGuard],
   },
   { path: '**', redirectTo: '' },

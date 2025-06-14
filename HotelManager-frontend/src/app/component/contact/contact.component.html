@@ -64,40 +64,42 @@
         <div class="card border-0 shadow-sm h-100">
           <div class="card-body">
             <h5 class="fw-bold mb-3">Send Us a Message</h5>
-            <form>
-              <div class="mb-3">
-                <label for="name" class="form-label">Your Name</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="name"
-                  placeholder="Enter your name"
-                  required
-                />
-              </div>
-              <div class="mb-3">
-                <label for="email" class="form-label">Your Email</label>
-                <input
-                  type="email"
-                  class="form-control"
-                  id="email"
-                  placeholder="Enter your email"
-                  required
-                />
-              </div>
-              <div class="mb-3">
-                <label for="message" class="form-label">Message</label>
+            <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
+              <div class="mb-4">
+                <label for="message" class="form-label">Your Message</label>
                 <textarea
-                  class="form-control"
                   id="message"
-                  rows="4"
-                  placeholder="How can we help you?"
-                  required
+                  formControlName="message"
+                  class="form-control"
+                  rows="6"
+                  [ngClass]="{ 'is-invalid': submitted && f['message'].errors }"
                 ></textarea>
+                <div
+                  *ngIf="submitted && f['message'].errors"
+                  class="invalid-feedback"
+                >
+                  <div *ngIf="f['message'].errors['required']">
+                    Message is required
+                  </div>
+                  <div *ngIf="f['message'].errors['minlength']">
+                    Message must be at least 10 characters
+                  </div>
+                </div>
               </div>
-              <button type="submit" class="btn btn-primary px-4">
-                Send Message
-              </button>
+
+              <div class="d-grid">
+                <button
+                  type="submit"
+                  class="btn btn-primary btn-lg"
+                  [disabled]="loading"
+                >
+                  <span
+                    *ngIf="loading"
+                    class="spinner-border spinner-border-sm me-1"
+                  ></span>
+                  Send Message
+                </button>
+              </div>
             </form>
           </div>
         </div>

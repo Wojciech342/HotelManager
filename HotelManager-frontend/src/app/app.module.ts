@@ -38,6 +38,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { ConfirmDialogComponent } from './component/confirm-dialog/confirm-dialog.component';
 import { ErrorDialogComponent } from './component/error-dialog/error-dialog.component';
 import { SuccessDialogComponent } from './component/success-dialog/success-dialog.component';
+import { MyMessagesComponent } from './component/my-messages/my-messages.component';
+import { MessageDetailComponent } from './component/message-detail/message-detail.component';
 
 @NgModule({
   declarations: [
@@ -58,6 +60,8 @@ import { SuccessDialogComponent } from './component/success-dialog/success-dialo
     ConfirmDialogComponent,
     ErrorDialogComponent,
     SuccessDialogComponent,
+    MyMessagesComponent,
+    MessageDetailComponent,
   ],
   imports: [
     BrowserModule,
