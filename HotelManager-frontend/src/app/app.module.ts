@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import {
   BrowserModule,
   provideClientHydration,
@@ -35,6 +35,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
+import { ConfirmDialogComponent } from './component/confirm-dialog/confirm-dialog.component';
+import { ErrorDialogComponent } from './component/error-dialog/error-dialog.component';
+import { SuccessDialogComponent } from './component/success-dialog/success-dialog.component';
 
 @NgModule({
   declarations: [
@@ -52,12 +55,16 @@ import { MatSelectModule } from '@angular/material/select';
     FooterComponent,
     StarRatingComponent,
     AddRoomDialogComponent,
+    ConfirmDialogComponent,
+    ErrorDialogComponent,
+    SuccessDialogComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
     FormsModule,
+    HttpClientModule,
     MatDatepickerModule,
     MatNativeDateModule,
     MatInputModule,
