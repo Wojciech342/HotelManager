@@ -1,0 +1,45 @@
+.success-dialog {
+  padding: 16px;
+  border-radius: 50px; /* Much larger radius for pill shape */
+  background-color: #4caf50;
+  color: white;
+  min-width: 300px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.success-icon {
+  font-size: 28px;
+  height: 28px;
+  width: 28px;
+}
+
+.success-message {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* Style the dialog container to appear as a floating notification */
+::ng-deep .success-dialog-panel {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2) !important;
+}
+
+::ng-deep .success-dialog-panel {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Make it center aligned horizontally */
+::ng-deep .success-dialog-panel .mat-mdc-dialog-surface {
+  margin: 0 auto !important;
+}
+
+/* Remove any backdrop coloring */
+::ng-deep .cdk-overlay-dark-backdrop {
+  background: transparent !important;
+}
+
+/* Ensure padding and margin are removed */
+::ng-deep .success-dialog-panel .mat-mdc-dialog-container {
+  padding: 0 !important;
+  margin: 0 !important;
+}
