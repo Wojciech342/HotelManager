@@ -39,14 +39,18 @@ export class LoginComponent implements OnInit {
 
     this.authService.attemptAuth(this.loginInfo).subscribe({
       next: (data) => {
-        this.tokenStorage.saveToken(data.token || '{}');
-        this.tokenStorage.saveUsername(data.username || '{}');
-        this.tokenStorage.saveAuthorities(data.authorities || []);
+        if (data.token) {
+          this.tokenStorage.saveToken(data.token);
+        }
+        if (data.username) {
+          this.tokenStorage.saveUsername(data.username);
+        }
+        if (data.authorities) {
+          this.tokenStorage.saveAuthorities(data.authorities);
+        }
 
         this.isLoginFailed = false;
-
         this.loginForm.reset();
-
         this.router.navigate(['/']);
       },
       error: (error) => {
