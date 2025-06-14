@@ -84,8 +84,10 @@
                 <span class="fw-semibold">Status:</span>
                 <span
                   [ngClass]="{
-                    'text-success': reservation.status === 'CONFIRMED',
-                    'text-danger': reservation.status === 'CANCELLED',
+                    'text-success': reservation.status === 'ACCEPTED',
+                    'text-danger':
+                      reservation.status === 'CANCELLED' ||
+                      reservation.status === 'REJECTED',
                     'text-warning': reservation.status === 'PENDING'
                   }"
                   >{{ reservation.status }}</span

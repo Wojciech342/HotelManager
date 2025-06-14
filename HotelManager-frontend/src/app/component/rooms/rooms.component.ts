@@ -112,6 +112,11 @@ export class RoomsComponent implements OnInit {
         title: 'Delete Room',
         message:
           'Are you sure you want to delete this room? This action cannot be undone.',
+        confirmText: 'Delete',
+        type: 'danger',
+        confirmIcon: 'delete',
+        cancelText: 'Cancel',
+        cancelIcon: 'close',
       },
     });
 
@@ -136,6 +141,7 @@ export class RoomsComponent implements OnInit {
             if (err.status === 409) {
               this.dialog.open(ErrorDialogComponent, {
                 width: '450px',
+                position: { top: '100px' },
                 data: {
                   title: 'Cannot Delete Room',
                   message:
@@ -145,6 +151,7 @@ export class RoomsComponent implements OnInit {
             } else {
               this.dialog.open(ErrorDialogComponent, {
                 width: '400px',
+                position: { top: '100px' },
                 data: {
                   title: 'Error',
                   message: 'Failed to delete room. Please try again later.',

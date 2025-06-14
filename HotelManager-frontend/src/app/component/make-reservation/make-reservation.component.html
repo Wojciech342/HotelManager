@@ -15,7 +15,7 @@
               [matDatepicker]="pickerStart"
               id="startDate"
               formControlName="startDate"
-              [matDatepickerFilter]="dateFilter"
+              [matDatepickerFilter]="startDateFilter"
               [min]="minDate"
               [max]="reservationForm.value.endDate"
               [disabled]="!room"
@@ -35,7 +35,7 @@
               [matDatepicker]="pickerEnd"
               id="endDate"
               formControlName="endDate"
-              [matDatepickerFilter]="dateFilter"
+              [matDatepickerFilter]="endDateFilter"
               [min]="
                 reservationForm.value.startDate
                   ? reservationForm.value.startDate
@@ -49,6 +49,12 @@
             ></mat-datepicker-toggle>
             <mat-datepicker #pickerEnd></mat-datepicker>
           </mat-form-field>
+          <div
+            *ngIf="reservationForm.errors?.['discontinuousRange']"
+            class="text-danger mt-2"
+          >
+            Your selected date range includes already booked dates.
+          </div>
         </div>
         <div class="mb-3">
           <strong>Total Price:</strong>
