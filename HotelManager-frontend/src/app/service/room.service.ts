@@ -1,7 +1,13 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Room } from '../model/room';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+
+export interface ApiError {
+  status: number;
+  message: string;
+}
 
 export interface RoomResponse {
   content: Room[];
@@ -59,5 +65,26 @@ export class RoomService {
 
   addRoom(formData: FormData): Observable<Room> {
     return this.http.post<Room>(this.baseUrl, formData);
+  }
+
+  deleteRoom(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`).pipe(
+      catchError((error) => {
+        let errorMessage = 'An unknown error occurred';
+
+        if (error.status === 409) {
+          errorMessage =
+            'Cannot delete room with active or upcoming reservations.';
+        }
+
+        return throwError(
+          () =>
+            ({
+              status: error.status,
+              message: errorMessage,
+            } as ApiError)
+        );
+      })
+    );
   }
 }
