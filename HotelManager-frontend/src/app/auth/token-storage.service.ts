@@ -30,11 +30,11 @@ export class TokenStorageService {
     }
   }
 
-  public getToken(): string {
+  public getToken(): string | null {
     if (this.isBrowser()) {
-      return localStorage.getItem(TOKEN_KEY) || '{}';
+      return localStorage.getItem(TOKEN_KEY);
     }
-    return '{}';
+    return null;
   }
 
   public saveUsername(username: string) {

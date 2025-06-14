@@ -32,7 +32,7 @@ export class AuthService {
 
   get isLoggedIn(): boolean {
     const token = this.tokenStorage.getToken();
-    return token != null && token !== '{}';
+    return !!token;
   }
 
   logout(): void {
