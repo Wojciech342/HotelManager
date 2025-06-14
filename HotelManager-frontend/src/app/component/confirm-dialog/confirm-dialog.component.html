@@ -1,0 +1,17 @@
+<h2 mat-dialog-title class="d-flex align-items-center gap-2">
+  <mat-icon color="warn">warning</mat-icon>
+  {{ data.title }}
+</h2>
+<mat-dialog-content>
+  <p class="mb-0">{{ data.message }}</p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-stroked-button color="primary" (click)="onCancel()">
+    <mat-icon>close</mat-icon>
+    Cancel
+  </button>
+  <button mat-flat-button color="warn" (click)="onConfirm()" class="ms-2">
+    <mat-icon>delete</mat-icon>
+    Delete
+  </button>
+</mat-dialog-actions>
