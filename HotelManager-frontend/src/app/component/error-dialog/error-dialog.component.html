@@ -1,0 +1,15 @@
+<h2 mat-dialog-title class="d-flex align-items-center gap-2">
+  <mat-icon color="warn">error_outline</mat-icon>
+  {{ data.title }}
+</h2>
+<mat-dialog-content>
+  <div class="alert alert-danger mt-3">
+    <p class="mb-0">{{ data.message }}</p>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-flat-button color="primary" (click)="close()">
+    <mat-icon>check</mat-icon>
+    Understand
+  </button>
+</mat-dialog-actions>
