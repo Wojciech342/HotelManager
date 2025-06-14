@@ -5,8 +5,10 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import pl.wojtek.project.exception.ResourceNotFoundException;
+import pl.wojtek.project.exception.RoomHasActiveReservationsException;
 import pl.wojtek.project.exception.RoomNumberAlreadyTakenException;
 import pl.wojtek.project.model.Room;
+import pl.wojtek.project.model.RoomReservation;
 import pl.wojtek.project.model.RoomSpecifications;
 import pl.wojtek.project.payload.RoomResponse;
 import pl.wojtek.project.repository.RoomRepository;
@@ -15,21 +17,25 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import pl.wojtek.project.repository.RoomReservationRepository;
 
 @Service
 public class RoomService {
 
     private final RoomRepository roomRepository;
+    private final RoomReservationRepository roomReservationRepository;
 
     @Autowired
-    public RoomService(RoomRepository roomRepository) {
+    public RoomService(RoomRepository roomRepository, RoomReservationRepository roomReservationRepository) {
         this.roomRepository = roomRepository;
+        this.roomReservationRepository = roomReservationRepository;
     }
 
     public List<Room> getAllRooms() {
@@ -59,9 +65,29 @@ public class RoomService {
     }
 
     public void deleteRoom(Long id) {
-        roomRepository.findById(id)
+        Room room = roomRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Room", "id", id));
 
+        // Check for active or future reservations
+        if (roomReservationRepository.existsActiveOrFutureReservation(id, LocalDate.now())) {
+            throw new RoomHasActiveReservationsException("Cannot delete room with active or upcoming reservations.");
+        }
+
+        // Find all past reservations for this room and set room to null
+        List<RoomReservation> pastReservations = roomReservationRepository.findByRoomId(id)
+                .orElse(List.of());
+
+        for (RoomReservation reservation : pastReservations) {
+            reservation.setImageUrl(room.getImageUrl()); // Keep the image URL for reference
+            reservation.setRoom(null); // Disconnect from the room
+        }
+
+        // Save all updated reservations
+        if (!pastReservations.isEmpty()) {
+            roomReservationRepository.saveAll(pastReservations);
+        }
+
+        // Now delete the room
         roomRepository.deleteById(id);
     }
 
