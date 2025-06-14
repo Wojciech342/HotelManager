@@ -16,7 +16,7 @@ export class MakeReservationComponent implements OnInit {
   room: Room | null = null;
   totalPrice: number | null = null;
   existingReservations: RoomReservation[] = [];
-  minDate: Date = new Date();
+  minDate: Date = new Date(new Date().setDate(new Date().getDate() - 7));
 
   dateFilter: (date: Date | null) => boolean = () => true;
 
