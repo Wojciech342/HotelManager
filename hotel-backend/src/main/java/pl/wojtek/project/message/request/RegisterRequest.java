@@ -7,7 +7,7 @@ import java.util.Set;
 
 @Getter
 @Setter
-public class SignUpForm {
+public class RegisterRequest {
 
     private String username;
 
