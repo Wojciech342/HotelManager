@@ -1,4 +1,4 @@
-package pl.wojtek.project.payload;
+package pl.wojtek.project.message.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

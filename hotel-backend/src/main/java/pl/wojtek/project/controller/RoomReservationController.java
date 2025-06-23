@@ -8,7 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pl.wojtek.project.model.ReservationStatus;
 import pl.wojtek.project.model.RoomReservation;
-import pl.wojtek.project.payload.RoomReservationResponse;
+import pl.wojtek.project.message.response.RoomReservationResponse;
 import pl.wojtek.project.service.RoomReservationService;
 
 import java.util.List;
@@ -60,7 +60,7 @@ public class RoomReservationController {
             @PathVariable String username,
             @RequestParam(value = "pageNumber", defaultValue = "0") Integer pageNumber,
             @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
-            @RequestParam(name = "sortBy", defaultValue = "number", required = false) String sortBy,
+            @RequestParam(name = "sortBy", defaultValue = "startDate", required = false) String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = "asc", required = false) String sortOrder) {
         RoomReservationResponse reservations = roomReservationService.getRoomReservationsByUsername(
                 username, pageNumber, pageSize, sortBy, sortOrder);
