@@ -1,7 +1,13 @@
 package pl.wojtek.project.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import pl.wojtek.project.exception.ResourceNotFoundException;
+import pl.wojtek.project.message.request.MessageRequest;
 import pl.wojtek.project.model.Message;
 import pl.wojtek.project.model.User;
 import pl.wojtek.project.repository.MessageRepository;
@@ -15,6 +21,7 @@ public class MessageService {
 
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
+    private final String adminUsername = "admin";
 
     @Autowired
     public MessageService(MessageRepository messageRepository, UserRepository userRepository) {
@@ -22,46 +29,34 @@ public class MessageService {
         this.userRepository = userRepository;
     }
 
-    public Message sendMessage(String senderUsername, String recipientUsername, String subject, String content) {
-        User sender = userRepository.findByUsername(senderUsername)
-                .orElseThrow(() -> new RuntimeException("Sender not found"));
-        User recipient = userRepository.findByUsername(recipientUsername)
-                .orElseThrow(() -> new RuntimeException("Recipient not found"));
+    @Transactional
+    public Message sendMessage(MessageRequest messageRequest) {
+        String senderUsername = getCurrentUsername();
+        User sender = findUserByUsername(senderUsername);
+        User recipient = findUserByUsername(adminUsername);
+
+        String subject = messageRequest.getSubject();
+        String content = messageRequest.getContent();
 
         Message message = new Message(sender, recipient, subject, content);
         return messageRepository.save(message);
     }
 
-    public Message replyToMessage(Long parentMessageId, String senderUsername, String content) {
-        Message parentMessage = messageRepository.findById(parentMessageId)
-                .orElseThrow(() -> new RuntimeException("Original message not found"));
+    @Transactional
+    public Message replyToMessage(Long parentMessageId, MessageRequest messageRequest) {
+        String senderUsername = getCurrentUsername();
+        User sender = findUserByUsername(senderUsername);
+        User adminUser = findUserByUsername(adminUsername);
 
-        User sender = userRepository.findByUsername(senderUsername)
-                .orElseThrow(() -> new RuntimeException("Sender not found"));
+        Message parentMessage = findMessageById(parentMessageId);
 
-        // Find the admin user
-        User adminUser = userRepository.findByUsername("admin")
-                .orElseThrow(() -> new RuntimeException("Admin user not found"));
+        authorizeAccess(parentMessage, senderUsername);
 
         // Determine the recipient based on who's sending - always the opposite party
-        User recipient;
-        if (sender.getUsername().equals("admin")) {
-            // If sender is admin, find the user in the conversation
-            if (parentMessage.getSender().getUsername().equals("admin")) {
-                recipient = parentMessage.getRecipient(); // Admin wrote to this user
-            } else {
-                recipient = parentMessage.getSender(); // This user wrote to admin
-            }
-        } else {
-            // If sender is regular user, recipient is always admin
-            recipient = adminUser;
-        }
+        User recipient = getRecipient(sender, parentMessage, adminUser);
 
-        // Use the same subject with "Re: " prefix if it doesn't already have it
-        String subject = parentMessage.getSubject();
-        if (!subject.startsWith("Re: ")) {
-            subject = "Re: " + subject;
-        }
+        String subject = formatReplySubject(parentMessage.getSubject());
+        String content = messageRequest.getContent();
 
         Message reply = new Message(sender, recipient, subject, content);
         reply.setParentMessage(parentMessage);
@@ -69,49 +64,90 @@ public class MessageService {
         return messageRepository.save(reply);
     }
 
-    public Message getMessageById(Long messageId) {
-        return messageRepository.findById(messageId)
-                .orElseThrow(() -> new RuntimeException("Message not found"));
+    private User getRecipient(User sender, Message parentMessage, User adminUser) {
+        User recipient;
+        if (sender.getUsername().equals("admin")) {
+            if (parentMessage.getSender().getUsername().equals("admin")) {
+                recipient = parentMessage.getRecipient(); // User was the first recipient
+            } else {
+                recipient = parentMessage.getSender(); // User was the first sender
+            }
+        } else {
+            // If sender is regular user, recipient is always admin
+            recipient = adminUser;
+        }
+        return recipient;
     }
 
-    public List<Message> getUserMessages(String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public List<Message> getUserMessages() {
+        String currentUsername = getCurrentUsername();
+        User user = findUserByUsername(currentUsername);
         return messageRepository.findAllUserMessages(user);
     }
 
+    @Transactional
     public List<Message> getMessageThread(Long messageId) {
-        Message rootMessage = messageRepository.findById(messageId)
-                .orElseThrow(() -> new RuntimeException("Message not found"));
+        String username = getCurrentUsername();
+        Message message = findMessageById(messageId);
 
-        // If this is a reply, find the root message
-        while (rootMessage.getParentMessage() != null) {
-            rootMessage = rootMessage.getParentMessage();
+        authorizeAccess(message, username);
+
+        // Find the root message of the thread
+        while (message.getParentMessage() != null) {
+            message = message.getParentMessage();
         }
 
-        // Get all messages in this thread (replies to this message)
-        List<Message> thread = messageRepository.findByParentMessage(rootMessage);
-        // Add the root message at the beginning
-        thread.add(0, rootMessage);
+        List<Message> thread = messageRepository.findByParentMessage(message);
+        thread.addFirst(message);
+
+        markThreadMessagesAsRead(thread, username);
 
         return thread;
     }
 
-    public Message markAsRead(Long messageId) {
-        Message message = messageRepository.findById(messageId)
-                .orElseThrow(() -> new RuntimeException("Message not found"));
-        message.setRead(true);
-        return messageRepository.save(message);
+    public void markThreadMessagesAsRead(List<Message> thread, String username) {
+        for (Message message : thread) {
+            System.out.println(message.getRecipient().getUsername());
+            if (!message.isRead() && message.getRecipient().getUsername().equals(username)) {
+                System.out.println(username);
+                message.setRead(true);
+                messageRepository.save(message);
+            }
+        }
     }
 
-    public long getUnreadCount(String username) {
+    private void authorizeAccess(Message message, String senderUsername) {
+        boolean isAuthorized = message.getSender().getUsername().equals(senderUsername) ||
+                message.getRecipient().getUsername().equals(senderUsername);
+
+        if (!isAuthorized) {
+            throw new AccessDeniedException("You are not authorized to reply to this message");
+        }
+    }
+
+    private User findUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+    }
+
+    private Message findMessageById(Long messageId) {
+        return messageRepository.findById(messageId)
+                .orElseThrow(() -> new ResourceNotFoundException("Message", "id", messageId));
+    }
+
+    public long getUnreadCount() {
+        String username = getCurrentUsername();
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
         return messageRepository.countUnreadMessages(user);
     }
 
-    public User getAdminUser() {
-        return userRepository.findByUsername("admin")
-                .orElseThrow(() -> new RuntimeException("Admin user not found"));
+    private String getCurrentUsername() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth.getName();
+    }
+
+    private String formatReplySubject(String subject) {
+        return subject.startsWith("Re: ") ? subject : "Re: " + subject;
     }
 }

@@ -10,14 +10,11 @@ import java.util.List;
 
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Long> {
-    List<Message> findBySenderOrderBySentAtDesc(User sender);
-    List<Message> findByRecipientOrderBySentAtDesc(User recipient);
-
     @Query("SELECT m FROM Message m WHERE m.sender = ?1 OR m.recipient = ?1 ORDER BY m.sentAt DESC")
     List<Message> findAllUserMessages(User user);
 
     @Query("SELECT COUNT(m) FROM Message m WHERE m.recipient = ?1 AND m.read = false")
-    long countUnreadMessages(User user);
+    Integer countUnreadMessages(User user);
 
     List<Message> findByParentMessage(Message parentMessage);
 }
