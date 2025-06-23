@@ -18,4 +18,5 @@ public interface RoomReservationRepository extends JpaRepository<RoomReservation
     @Query("SELECT COUNT(r) > 0 FROM RoomReservation r WHERE r.room.id = :roomId AND r.endDate >= :today")
     boolean existsActiveOrFutureReservation(Long roomId, LocalDate today);
     List<RoomReservation> findByStatus(ReservationStatus status);
+    List<RoomReservation> findByReviewId(Long reviewId);
 }

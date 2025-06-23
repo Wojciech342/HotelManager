@@ -104,9 +104,29 @@ public class RoomReviewService {
     }
 
     public void deleteReview(Long id) {
-        roomReviewRepository.findById(id)
+        RoomReview roomReview = roomReviewRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("RoomReview", "id", id));
 
+        String reviewUsername = roomReview.getUsername();
+        User user = userRepository.findByUsername(reviewUsername)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "username", reviewUsername));
+
+        // Remove review from user's collection
+        user.getRoomReviews().remove(roomReview);
+        userRepository.save(user);
+
+        List<RoomReservation> reservationsWithReview = roomReservationRepository.findByReviewId(id);
+        for (RoomReservation reservation : reservationsWithReview) {
+            reservation.setReview(null);
+        }
+        roomReservationRepository.saveAll(reservationsWithReview);
+
+        Room room = roomReview.getRoom();
+        room.getReviews().remove(roomReview);
+        roomRepository.save(room);
+
         roomReviewRepository.deleteById(id);
+
+        updateAverageRoomRating(room);
     }
 }

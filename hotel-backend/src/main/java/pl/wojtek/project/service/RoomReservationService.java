@@ -12,7 +12,7 @@ import pl.wojtek.project.model.ReservationStatus;
 import pl.wojtek.project.model.Room;
 import pl.wojtek.project.model.RoomReservation;
 import pl.wojtek.project.model.User;
-import pl.wojtek.project.payload.RoomReservationResponse;
+import pl.wojtek.project.message.response.RoomReservationResponse;
 import pl.wojtek.project.repository.RoomRepository;
 import pl.wojtek.project.repository.RoomReservationRepository;
 import pl.wojtek.project.repository.UserRepository;
