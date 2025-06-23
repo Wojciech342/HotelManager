@@ -21,11 +21,7 @@ public class User {
     private Long id;
 
     private String username;
-    private String email;
-    private String firstName;
-    private String lastName;
     private String password;
-    private String phone;
 
     @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Reservation> reservations = new ArrayList<>();
