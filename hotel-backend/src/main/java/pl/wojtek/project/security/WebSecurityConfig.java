@@ -93,7 +93,7 @@ public class WebSecurityConfig {
                         "/api/auth/**",
                         "/api/rooms/**",
                         "/api/room-reservations/**",
-                        "/api/room-reviews",
+                        "/api/room-reviews/**",
                         "/uploads/**"
                     ).permitAll()
                     .anyRequest().authenticated()
