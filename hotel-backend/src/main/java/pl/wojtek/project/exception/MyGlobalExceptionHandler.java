@@ -14,14 +14,20 @@ public class MyGlobalExceptionHandler {
         return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(RoomNumberAlreadyTakenException.class)
-    public ResponseEntity<String> handleRoomNumberAlreadyTakenException(RoomNumberAlreadyTakenException e) {
+    @ExceptionHandler(ResourceAlreadyExistsException.class)
+    public ResponseEntity<String> handleResourceAlreadyExistsException(ResourceAlreadyExistsException e) {
         String message = e.getMessage();
         return new ResponseEntity<>(message, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(RoomHasActiveReservationsException.class)
     public ResponseEntity<String> handleRoomHasActiveReservations(RoomHasActiveReservationsException e) {
+        String message = e.getMessage();
+        return new ResponseEntity<>(message, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(RoomReservationDatesOverlapException.class)
+    public ResponseEntity<String> handleRoomReservationDatesOverlapException(RoomReservationDatesOverlapException e) {
         String message = e.getMessage();
         return new ResponseEntity<>(message, HttpStatus.CONFLICT);
     }
