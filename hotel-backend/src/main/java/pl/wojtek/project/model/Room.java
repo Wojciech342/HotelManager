@@ -3,6 +3,7 @@ package pl.wojtek.project.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,9 +23,14 @@ public class Room {
     private Long id;
 
     @Column(unique = true)
+    @Positive(message = "Room number must be positive")
     private Integer number;
+
+    @Positive(message = "Capacity must be positive")
     private Integer capacity;
-    private Double averageRating;
+    private Double averageRating = 0.0;
+
+    @Positive(message = "Price must be positive")
     private Double pricePerNight;
     private String imageUrl;
 
@@ -33,6 +39,7 @@ public class Room {
 
     @OneToMany(mappedBy = "room", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<RoomReview> reviews = new ArrayList<>();
+
     @OneToMany(mappedBy = "room", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JsonIgnoreProperties("room")
     private List<RoomReservation> reservations = new ArrayList<>();
