@@ -1,12 +1,13 @@
 package pl.wojtek.project.exception;
 
+import lombok.Getter;
+
+@Getter
 public class ResourceNotFoundException extends RuntimeException {
     String resourceName;
     String field;
     Long fieldId;
     String fieldValue;
-
-    public ResourceNotFoundException() {}
 
     public ResourceNotFoundException(String resourceName, String field, Long fieldId) {
         super(resourceName + " with " + field + " " + fieldId + " not found");

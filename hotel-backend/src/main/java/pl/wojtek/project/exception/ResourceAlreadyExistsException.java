@@ -1,25 +1,26 @@
 package pl.wojtek.project.exception;
 
-public class ResourceAlreadyTakenException extends RuntimeException {
+import lombok.Getter;
+
+@Getter
+public class ResourceAlreadyExistsException extends RuntimeException {
     String resourceName;
     String field;
     Long fieldId;
     String fieldValue;
 
-    public ResourceAlreadyTakenException() {}
 
-    public ResourceAlreadyTakenException(String resourceName, String field, Long fieldId) {
-        super(resourceName + " with " + field + " " + fieldId + " not found");
+    public ResourceAlreadyExistsException(String resourceName, String field, Long fieldId) {
+        super(resourceName + " with " + field + " " + fieldId + " already exists");
         this.resourceName = resourceName;
         this.field = field;
         this.fieldId = fieldId;
     }
 
-    public ResourceAlreadyTakenException(String resourceName, String field, String fieldValue) {
-        super(resourceName + " with " + field + " " + fieldValue + " not found");
+    public ResourceAlreadyExistsException(String resourceName, String field, String fieldValue) {
+        super(resourceName + " with " + field + " " + fieldValue + " already exists");
         this.resourceName = resourceName;
         this.field = field;
         this.fieldValue = fieldValue;
     }
-}
 }
