@@ -21,7 +21,7 @@ public class RoomReviewController {
     }
 
     @PostMapping
-    public ResponseEntity<RoomReview> createReview(
+    public ResponseEntity<RoomReview> createRoomReview(
             @RequestParam Long roomReservationId,
             @RequestBody RoomReview review) {
         RoomReview roomReview = roomReviewService.createReview(roomReservationId, review);
@@ -29,26 +29,26 @@ public class RoomReviewController {
     }
 
     @GetMapping
-    public ResponseEntity<List<RoomReview>> getAllReviews() {
+    public ResponseEntity<List<RoomReview>> getRoomReviews() {
         List<RoomReview> reviews = roomReviewService.getAllReviews();
         return new ResponseEntity<>(reviews, HttpStatus.OK);
     }
 
     @GetMapping("/rooms/{roomId}")
-    public ResponseEntity<List<RoomReview>> getReviewsByRoom(@PathVariable Long roomId) {
+    public ResponseEntity<List<RoomReview>> getRoomReviewsByRoomId(@PathVariable Long roomId) {
         List<RoomReview> reviews = roomReviewService.getReviewsByRoom(roomId);
         return new ResponseEntity<>(reviews, HttpStatus.OK);
     }
 
     @GetMapping("/users/{username}")
-    public ResponseEntity<List<RoomReview>> getReviewsByUser(@PathVariable String username) {
+    public ResponseEntity<List<RoomReview>> getReviewsByUsername(@PathVariable String username) {
         List<RoomReview> reviews = roomReviewService.getReviewsByUsername(username);
         return new ResponseEntity<>(reviews, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RoomReview> getReview(@PathVariable Long id) {
-        RoomReview review = roomReviewService.getReview(id);
+    public ResponseEntity<RoomReview> getReviewById(@PathVariable Long id) {
+        RoomReview review = roomReviewService.getReviewById(id);
         return new ResponseEntity<>(review, HttpStatus.OK);
     }
 

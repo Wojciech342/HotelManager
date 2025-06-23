@@ -49,19 +49,23 @@ public class RoomReviewService {
         user.getRoomReviews().add(savedReview);
         userRepository.save(user);
 
-        // add review to reservation
         roomReservation.setReview(savedReview);
         roomReservationRepository.save(roomReservation);
 
+        updateAverageRoomRating(room);
+        return savedReview;
+    }
+
+    private void updateAverageRoomRating(Room room) {
         List<RoomReview> reviews = roomReviewRepository.findByRoomId(room.getId());
+
         double avg = reviews.stream()
                 .mapToDouble(RoomReview::getRating)
                 .average()
                 .orElse(0.0);
+
         room.setAverageRating(avg);
         roomRepository.save(room);
-
-        return savedReview;
     }
 
     public List<RoomReview> getAllReviews() {
@@ -82,11 +86,9 @@ public class RoomReviewService {
         return roomReviewRepository.findByUsername(username);
     }
 
-    public RoomReview getReview(Long roomReviewId) {
-        RoomReview roomReview = roomReviewRepository.findById(roomReviewId)
+    public RoomReview getReviewById(Long roomReviewId) {
+        return roomReviewRepository.findById(roomReviewId)
                 .orElseThrow(() -> new ResourceNotFoundException("RoomReview", "id", roomReviewId));
-
-        return roomReview;
     }
 
     public RoomReview updateReview(Long id, RoomReview updatedReview) {

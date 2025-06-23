@@ -14,7 +14,7 @@ import pl.wojtek.project.service.RoomReservationService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/roomReservations")
+@RequestMapping("/api/room-reservations")
 public class RoomReservationController {
 
     private final RoomReservationService roomReservationService;
@@ -22,6 +22,15 @@ public class RoomReservationController {
     @Autowired
     public RoomReservationController(RoomReservationService roomReservationService) {
         this.roomReservationService = roomReservationService;
+    }
+
+    @PostMapping
+    public ResponseEntity<RoomReservation> createRoomReservation(
+            @RequestParam String username,
+            @RequestParam Long roomId,
+            @RequestBody RoomReservation roomReservation) {
+        RoomReservation createdRoomReservation = roomReservationService.createRoomReservation(username, roomId, roomReservation);
+        return new ResponseEntity<>(createdRoomReservation, HttpStatus.CREATED);
     }
 
     @GetMapping
@@ -47,7 +56,7 @@ public class RoomReservationController {
     }
 
     @GetMapping("/users/{username}")
-    public ResponseEntity<RoomReservationResponse> getReservationsByUsernamePaged(
+    public ResponseEntity<RoomReservationResponse> getRoomReservationsByUsername(
             @PathVariable String username,
             @RequestParam(value = "pageNumber", defaultValue = "0") Integer pageNumber,
             @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
@@ -58,40 +67,16 @@ public class RoomReservationController {
         return new ResponseEntity<>(reservations, HttpStatus.OK);
     }
 
-    @PostMapping
-    public ResponseEntity<RoomReservation> createRoomReservation(
-            @RequestParam String username,
-            @RequestParam Long roomId,
-            @RequestBody RoomReservation roomReservation) {
-        RoomReservation createdRoomReservation = roomReservationService.createRoomReservation(username, roomId, roomReservation);
-        return new ResponseEntity<>(createdRoomReservation, HttpStatus.CREATED);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<RoomReservation> updateRoomReservation(
-            @PathVariable Long id,
-            @RequestBody RoomReservation roomReservation
-    ) {
-        RoomReservation updatedRoomReservation = roomReservationService.updateRoomReservation(id, roomReservation);
-        return new ResponseEntity<>(updatedRoomReservation, HttpStatus.OK);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<RoomReservation> deleteRoomReservation(@PathVariable Long id) {
-        roomReservationService.deleteRoomReservationById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
     @GetMapping("/pending")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<RoomReservation>> getPendingReservations() {
+    public ResponseEntity<List<RoomReservation>> getPendingRoomReservations() {
         List<RoomReservation> pendingReservations = roomReservationService.getPendingReservations();
         return new ResponseEntity<>(pendingReservations, HttpStatus.OK);
     }
 
     @PutMapping("/{id}/status")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<RoomReservation> updateReservationStatus(
+    public ResponseEntity<RoomReservation> updateRoomReservationStatus(
             @PathVariable Long id,
             @RequestParam ReservationStatus status) {
         RoomReservation updatedReservation = roomReservationService.updateReservationStatus(id, status);

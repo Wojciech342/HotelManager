@@ -7,12 +7,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import pl.wojtek.project.exception.ResourceNotFoundException;
+import pl.wojtek.project.exception.RoomReservationDatesOverlapException;
 import pl.wojtek.project.model.ReservationStatus;
 import pl.wojtek.project.model.Room;
 import pl.wojtek.project.model.RoomReservation;
 import pl.wojtek.project.model.User;
 import pl.wojtek.project.payload.RoomReservationResponse;
-import pl.wojtek.project.payload.RoomResponse;
 import pl.wojtek.project.repository.RoomRepository;
 import pl.wojtek.project.repository.RoomReservationRepository;
 import pl.wojtek.project.repository.UserRepository;
@@ -41,9 +41,7 @@ public class RoomReservationService {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new ResourceNotFoundException("Room", "id", roomId));
 
-        if (hasOverlappingReservation(room, roomReservation)) {
-            throw new IllegalArgumentException("Reservation dates overlap with an existing reservation");
-        }
+        checkForOverlappingReservation(room, roomReservation);
 
         roomReservation.setUser(user);
         roomReservation.setRoom(room);
@@ -53,16 +51,24 @@ public class RoomReservationService {
         return roomReservationRepository.save(roomReservation);
     }
 
-    private boolean hasOverlappingReservation(Room room, RoomReservation newReservation) {
-        return roomReservationRepository.findByRoomId(room.getId())
+    private void checkForOverlappingReservation(Room room, RoomReservation newReservation) {
+        List<RoomReservation> activeReservations = roomReservationRepository.findByRoomId(room.getId())
                 .orElse(List.of())
                 .stream()
                 .filter(res -> res.getStatus() != ReservationStatus.CANCELLED &&
                         res.getStatus() != ReservationStatus.REJECTED)
-                .anyMatch(res ->
-                        newReservation.getStartDate().isBefore(res.getEndDate()) &&
-                                newReservation.getEndDate().isAfter(res.getStartDate())
+                .toList();
+
+        for (RoomReservation existingRes : activeReservations) {
+            if (newReservation.getStartDate().isBefore(existingRes.getEndDate()) &&
+                    newReservation.getEndDate().isAfter(existingRes.getStartDate())) {
+                throw new RoomReservationDatesOverlapException(
+                        room,
+                        existingRes.getStartDate(),
+                        existingRes.getEndDate()
                 );
+            }
+        }
     }
 
     public RoomReservationResponse getRoomReservations(Integer pageNumber, Integer pageSize,
@@ -74,6 +80,10 @@ public class RoomReservationService {
         Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
 
         Page<RoomReservation> pageRoomReservations = roomReservationRepository.findAll(pageDetails);
+        return getRoomReservationResponse(pageRoomReservations);
+    }
+
+    private RoomReservationResponse getRoomReservationResponse(Page<RoomReservation> pageRoomReservations) {
         RoomReservationResponse roomReservationResponse = new RoomReservationResponse();
         roomReservationResponse.setContent(pageRoomReservations.getContent());
         roomReservationResponse.setPageNumber(pageRoomReservations.getNumber());
@@ -85,44 +95,13 @@ public class RoomReservationService {
     }
 
     public RoomReservation getRoomReservationById(Long id) {
-        RoomReservation roomReservation = roomReservationRepository.findById(id)
+        return roomReservationRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("RoomReservation", "id", id));
-        return roomReservation;
-    }
-
-    public RoomReservation updateRoomReservation(Long id, RoomReservation roomReservation) {
-        RoomReservation roomReservationFromDB = roomReservationRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("RoomReservation", "id", id));
-
-        if (roomReservation.getStartDate() != null) {
-            roomReservationFromDB.setStartDate(roomReservation.getStartDate());
-        }
-        if (roomReservation.getEndDate() != null) {
-            roomReservationFromDB.setEndDate(roomReservation.getEndDate());
-        }
-        if (roomReservation.getPrice() != 0) {
-            roomReservationFromDB.setPrice(roomReservation.getPrice());
-        }
-        if (roomReservation.getStatus() != null) {
-            roomReservationFromDB.setStatus(roomReservation.getStatus());
-        }
-
-        RoomReservation updatedRoomReservation = roomReservationRepository.save(roomReservationFromDB);
-        return updatedRoomReservation;
-    }
-
-    public void deleteRoomReservationById(Long id) {
-        roomReservationRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("RoomReservation", "id", id));
-
-        roomReservationRepository.deleteById(id);
     }
 
     public List<RoomReservation> getRoomReservationsByRoomId(Long roomId) {
-        List<RoomReservation> roomReservations = roomReservationRepository
-                .findByRoomId(roomId).orElseThrow(() -> new ResourceNotFoundException("RoomReservation", "roomId", roomId));
-
-        return roomReservations;
+        return roomReservationRepository.findByRoomId(roomId)
+                .orElseThrow(() -> new ResourceNotFoundException("RoomReservation", "roomId", roomId));
     }
 
     public RoomReservationResponse getRoomReservationsByUsername(
@@ -135,17 +114,9 @@ public class RoomReservationService {
                 : Sort.by(sortBy).descending();
 
         Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
-
         Page<RoomReservation> pageRoomReservations = roomReservationRepository.findByUserId(user.getId(), pageDetails);
 
-        RoomReservationResponse response = new RoomReservationResponse();
-        response.setContent(pageRoomReservations.getContent());
-        response.setPageNumber(pageRoomReservations.getNumber());
-        response.setPageSize(pageRoomReservations.getSize());
-        response.setTotalElements(pageRoomReservations.getTotalElements());
-        response.setTotalPages(pageRoomReservations.getTotalPages());
-        response.setLastPage(pageRoomReservations.isLast());
-        return response;
+        return getRoomReservationResponse(pageRoomReservations);
     }
 
     public List<RoomReservation> getPendingReservations() {
