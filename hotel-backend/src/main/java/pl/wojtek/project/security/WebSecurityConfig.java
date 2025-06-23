@@ -15,21 +15,30 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import pl.wojtek.project.security.jwt.JwtAuthEntryPoint;
 import pl.wojtek.project.security.jwt.JwtAuthTokenFilter;
 import pl.wojtek.project.security.service.UserDetailsServiceImpl;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class WebSecurityConfig {
 
-    @Autowired
-    UserDetailsServiceImpl userDetailsService;
-
+    private final UserDetailsServiceImpl userDetailsService;
     // Handles all unauthorized requests
+    private final JwtAuthEntryPoint unauthorizedHandler;
+
     @Autowired
-    private JwtAuthEntryPoint unauthorizedHandler;
+    public WebSecurityConfig(UserDetailsServiceImpl userDetailsService, JwtAuthEntryPoint unauthorizedHandler) {
+        this.userDetailsService = userDetailsService;
+        this.unauthorizedHandler = unauthorizedHandler;
+    }
 
     // Intercepts all requests and check for valid jwt token
     @Bean
@@ -52,31 +61,44 @@ public class WebSecurityConfig {
     }
 
     @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://localhost:4200", "https://yourappdomain.com"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-                .cors(Customizer.withDefaults())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests((auth) -> auth
-                        .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
-                        .requestMatchers("/").permitAll()
-                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/error").permitAll() // this enables the body in the exception responses
-                        .requestMatchers("/exampleSecurity/user").hasRole("USER")
-                        .requestMatchers("/exampleSecurity/admin").hasRole("ADMIN")
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/rooms/**").permitAll()
-                        .requestMatchers("/api/roomReservations/**").permitAll()
-                        .requestMatchers("/api/**").permitAll()
-                        .requestMatchers("/uploads/**").permitAll()
-                        .anyRequest().authenticated()
-                )
                 // Specify how to handle all unauthorized requests
                 .exceptionHandling(unauthorized -> unauthorized
                         .authenticationEntryPoint(unauthorizedHandler)
                 )
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                    .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
+                    .requestMatchers(
+                        "/",
+                        "/error",
+                        "/api/auth/**",
+                        "/api/rooms/**",
+                        "/api/room-reservations/**",
+                        "/api/room-reviews",
+                        "/uploads/**"
+                    ).permitAll()
+                    .anyRequest().authenticated()
+            );
+
 
         // Adds your JWT filter before the username/password filter.
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
