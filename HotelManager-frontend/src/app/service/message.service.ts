@@ -24,7 +24,7 @@ export class MessageService {
   }
 
   sendContactMessage(message: string): Observable<Message> {
-    return this.http.post<Message>(`${this.baseUrl}/contact`, {
+    return this.http.post<Message>(`${this.baseUrl}/send`, {
       message,
     });
   }

@@ -17,7 +17,7 @@ export interface RoomReservationResponse {
   providedIn: 'root',
 })
 export class RoomReservationService {
-  private apiUrl = 'http://localhost:8080/api/roomReservations';
+  private apiUrl = 'http://localhost:8080/api/room-reservations';
 
   constructor(private http: HttpClient) {}
 
