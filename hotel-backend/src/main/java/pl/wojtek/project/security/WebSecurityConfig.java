@@ -4,6 +4,7 @@ import jakarta.servlet.DispatcherType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -91,11 +92,12 @@ public class WebSecurityConfig {
                         "/",
                         "/error",
                         "/api/auth/**",
-                        "/api/rooms/**",
-                        "/api/room-reservations/**",
-                        "/api/room-reviews/**",
                         "/uploads/**"
                     ).permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/rooms/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/room-reviews/**").permitAll()
+                    .requestMatchers("/api/room-reservations/**").authenticated()
+                    .requestMatchers("/api/room-reviews/**").authenticated()
                     .anyRequest().authenticated()
             );
 
