@@ -164,10 +164,8 @@ export class MakeReservationComponent implements OnInit {
       status: 'PENDING',
     };
 
-    const username = localStorage.getItem('AuthUsername');
-
     this.roomReservationService
-      .createRoomReservation(username!, this.room.id!, reservation)
+      .createRoomReservation(this.room.id!, reservation)
       .subscribe({
         next: () => {
           this.router.navigate(['/rooms']);

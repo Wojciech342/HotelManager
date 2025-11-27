@@ -22,12 +22,11 @@ export class RoomReservationService {
   constructor(private http: HttpClient) {}
 
   createRoomReservation(
-    username: string,
     roomId: number,
     reservation: RoomReservation
   ): Observable<RoomReservation> {
     return this.http.post<RoomReservation>(
-      `${this.apiUrl}?username=${username}&roomId=${roomId}`,
+      `${this.apiUrl}?roomId=${roomId}`,
       reservation
     );
   }
