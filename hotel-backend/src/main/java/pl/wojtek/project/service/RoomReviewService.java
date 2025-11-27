@@ -1,6 +1,9 @@
 package pl.wojtek.project.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.wojtek.project.exception.ResourceNotFoundException;
@@ -36,18 +39,36 @@ public class RoomReviewService {
 
     @Transactional
     public RoomReview createReview(Long roomReservationId, RoomReview review) {
+        String currentUsername = getCurrentUsername();
+        
         RoomReservation roomReservation = roomReservationRepository.findById(roomReservationId)
                 .orElseThrow(() -> new ResourceNotFoundException("RoomReservation", "id", roomReservationId));
-        Room room = roomRepository.findById(roomReservation.getRoom().getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Room", "id", roomReservation.getRoom().getId()));
-        User user = userRepository.findByUsername(review.getUsername())
-                .orElseThrow(() -> new ResourceNotFoundException("User", "username", review.getUsername()));
+        
+        if (!roomReservation.getUser().getUsername().equals(currentUsername)) {
+            throw new AccessDeniedException("You can only review your own reservations");
+        }
+        
+        if (roomReservation.getReview() != null) {
+            throw new IllegalStateException("This reservation already has a review");
+        }
+        
+        Room room = roomReservation.getRoom();
+        if (room == null) {
+            throw new IllegalStateException("Cannot review a reservation for a deleted room");
+        }
+        
+        User user = userRepository.findByUsername(currentUsername)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "username", currentUsername));
 
+        // Set relationships
+        review.setUser(user);
         review.setRoom(room);
+        
+        // Add to collections (bidirectional sync)
+        user.getRoomReviews().add(review);
+        room.getReviews().add(review);
+        
         RoomReview savedReview = roomReviewRepository.save(review);
-
-        user.getRoomReviews().add(savedReview);
-        userRepository.save(user);
 
         roomReservation.setReview(savedReview);
         roomReservationRepository.save(roomReservation);
@@ -83,7 +104,7 @@ public class RoomReviewService {
         userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
 
-        return roomReviewRepository.findByUsername(username);
+        return roomReviewRepository.findByUserUsername(username);
     }
 
     public RoomReview getReviewById(Long roomReviewId) {
@@ -91,30 +112,31 @@ public class RoomReviewService {
                 .orElseThrow(() -> new ResourceNotFoundException("RoomReview", "id", roomReviewId));
     }
 
+    @Transactional
     public RoomReview updateReview(Long id, RoomReview updatedReview) {
         RoomReview review = roomReviewRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("RoomReview", "id", id));
-        if(updatedReview.getDescription() != null) {
+        
+        authorizeReviewAccess(review);
+        
+        if (updatedReview.getDescription() != null) {
             review.setDescription(updatedReview.getDescription());
         }
-        if(updatedReview.getRating() != null) {
+        if (updatedReview.getRating() != null) {
             review.setRating(updatedReview.getRating());
+            updateAverageRoomRating(review.getRoom());
         }
         return roomReviewRepository.save(review);
     }
 
+    @Transactional
     public void deleteReview(Long id) {
         RoomReview roomReview = roomReviewRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("RoomReview", "id", id));
 
-        String reviewUsername = roomReview.getUsername();
-        User user = userRepository.findByUsername(reviewUsername)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "username", reviewUsername));
+        authorizeReviewAccess(roomReview);
 
-        // Remove review from user's collection
-        user.getRoomReviews().remove(roomReview);
-        userRepository.save(user);
-
+        // Clear reservation's review reference
         List<RoomReservation> reservationsWithReview = roomReservationRepository.findByReviewId(id);
         for (RoomReservation reservation : reservationsWithReview) {
             reservation.setReview(null);
@@ -122,11 +144,29 @@ public class RoomReviewService {
         roomReservationRepository.saveAll(reservationsWithReview);
 
         Room room = roomReview.getRoom();
-        room.getReviews().remove(roomReview);
-        roomRepository.save(room);
+        User user = roomReview.getUser();
 
-        roomReviewRepository.deleteById(id);
+        // Remove from collections - orphanRemoval will handle the delete
+        room.getReviews().remove(roomReview);
+        user.getRoomReviews().remove(roomReview);
 
         updateAverageRoomRating(room);
+    }
+    
+    private void authorizeReviewAccess(RoomReview review) {
+        String currentUsername = getCurrentUsername();
+        boolean isOwner = currentUsername.equals(review.getUsername());
+        boolean isAdmin = SecurityContextHolder.getContext().getAuthentication()
+                .getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+        
+        if (!isOwner && !isAdmin) {
+            throw new AccessDeniedException("You can only modify your own reviews");
+        }
+    }
+    
+    private String getCurrentUsername() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth.getName();
     }
 }

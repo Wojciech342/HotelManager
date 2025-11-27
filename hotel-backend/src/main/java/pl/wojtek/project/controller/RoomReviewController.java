@@ -3,6 +3,7 @@ package pl.wojtek.project.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pl.wojtek.project.model.RoomReview;
 import pl.wojtek.project.service.RoomReviewService;
@@ -21,6 +22,7 @@ public class RoomReviewController {
     }
 
     @PostMapping
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<RoomReview> createRoomReview(
             @RequestParam Long roomReservationId,
             @RequestBody RoomReview review) {
@@ -53,12 +55,14 @@ public class RoomReviewController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<RoomReview> updateReview(@PathVariable Long id, @RequestBody RoomReview review) {
         RoomReview updatedReview = roomReviewService.updateReview(id, review);
         return new ResponseEntity<>(updatedReview, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> deleteReview(@PathVariable Long id) {
         roomReviewService.deleteReview(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
