@@ -20,7 +20,9 @@ public class RoomReview {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String username;
+    @ManyToOne
+    @JsonIgnore
+    private User user;
 
     @ManyToOne
     @JsonIgnore
@@ -32,4 +34,8 @@ public class RoomReview {
     @Min(1)
     @Max(5)
     private Double rating;
+    
+    public String getUsername() {
+        return user != null ? user.getUsername() : null;
+    }
 }

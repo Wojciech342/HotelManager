@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface RoomReviewRepository extends JpaRepository<RoomReview, Long> {
     List<RoomReview> findByRoomId(Long roomId);
-    List<RoomReview> findByUsername(String username);
+    List<RoomReview> findByUserUsername(String username);
 }
