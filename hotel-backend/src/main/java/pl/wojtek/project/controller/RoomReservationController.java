@@ -5,7 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import jakarta.validation.Valid;
 import pl.wojtek.project.model.ReservationStatus;
 import pl.wojtek.project.model.RoomReservation;
 import pl.wojtek.project.message.response.RoomReservationResponse;
@@ -25,15 +29,18 @@ public class RoomReservationController {
     }
 
     @PostMapping
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<RoomReservation> createRoomReservation(
-            @RequestParam String username,
             @RequestParam Long roomId,
             @RequestBody RoomReservation roomReservation) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
         RoomReservation createdRoomReservation = roomReservationService.createRoomReservation(username, roomId, roomReservation);
         return new ResponseEntity<>(createdRoomReservation, HttpStatus.CREATED);
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<RoomReservationResponse> getRoomReservations(
             @RequestParam(value = "pageNumber", defaultValue = "0") Integer pageNumber,
             @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
@@ -44,6 +51,7 @@ public class RoomReservationController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<RoomReservation> getRoomReservationById(@PathVariable Long id) {
         RoomReservation roomReservation = roomReservationService.getRoomReservationById(id);
         return new ResponseEntity<>(roomReservation, HttpStatus.OK);
@@ -56,6 +64,7 @@ public class RoomReservationController {
     }
 
     @GetMapping("/users/{username}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<RoomReservationResponse> getRoomReservationsByUsername(
             @PathVariable String username,
             @RequestParam(value = "pageNumber", defaultValue = "0") Integer pageNumber,

@@ -5,7 +5,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import jakarta.transaction.Transactional;
 import pl.wojtek.project.exception.ResourceNotFoundException;
 import pl.wojtek.project.exception.RoomReservationDatesOverlapException;
 import pl.wojtek.project.model.ReservationStatus;
@@ -35,12 +40,13 @@ public class RoomReservationService {
         this.userRepository = userRepository;
     }
 
+    @Transactional
     public RoomReservation createRoomReservation(String username, Long roomId, RoomReservation roomReservation) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new ResourceNotFoundException("Room", "id", roomId));
-
+        
         checkForOverlappingReservation(room, roomReservation);
 
         roomReservation.setUser(user);
@@ -95,8 +101,11 @@ public class RoomReservationService {
     }
 
     public RoomReservation getRoomReservationById(Long id) {
-        return roomReservationRepository.findById(id)
+        RoomReservation reservation = roomReservationRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("RoomReservation", "id", id));
+        
+        authorizeAccess(reservation);
+        return reservation;
     }
 
     public List<RoomReservation> getRoomReservationsByRoomId(Long roomId) {
@@ -106,6 +115,9 @@ public class RoomReservationService {
 
     public RoomReservationResponse getRoomReservationsByUsername(
             String username, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+        
+        authorizeUsernameAccess(username);
+        
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
 
@@ -123,9 +135,39 @@ public class RoomReservationService {
         return roomReservationRepository.findByStatus(ReservationStatus.PENDING);
     }
 
+    @Transactional
     public RoomReservation updateReservationStatus(Long id, ReservationStatus status) {
-        RoomReservation reservation = getRoomReservationById(id);
+        RoomReservation reservation = roomReservationRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("RoomReservation", "id", id));
         reservation.setStatus(status);
         return roomReservationRepository.save(reservation);
+    }
+    
+    private void authorizeAccess(RoomReservation reservation) {
+        String currentUsername = getCurrentUsername();
+        String ownerUsername = reservation.getUser().getUsername();
+        
+        if (!isAdmin() && !currentUsername.equals(ownerUsername)) {
+            throw new AccessDeniedException("You can only view your own reservations");
+        }
+    }
+    
+    private void authorizeUsernameAccess(String username) {
+        String currentUsername = getCurrentUsername();
+        
+        if (!isAdmin() && !currentUsername.equals(username)) {
+            throw new AccessDeniedException("You can only view your own reservations");
+        }
+    }
+    
+    private String getCurrentUsername() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth.getName();
+    }
+    
+    private boolean isAdmin() {
+        return SecurityContextHolder.getContext().getAuthentication()
+                .getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
     }
 }
